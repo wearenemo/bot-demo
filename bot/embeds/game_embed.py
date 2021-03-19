@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime as dt
 
 from discord import Embed, Colour, Member
 from discord.abc import Messageable
@@ -6,6 +7,7 @@ from discord.ext.commands import Bot
 
 from bot.embeds.embed_option import EmbedOption
 from bot.embeds.embed_option_delegate import EmbedOptionDelegate
+from bot.embeds.option_response import EmbedOptionResponse
 
 from utils import Emoji as E
 
@@ -14,7 +16,7 @@ class GameEmbed(Embed):
 
     default_colour = Colour.dark_red()
     default_footer_text = "make your choice by reacting"
-    default_timeout = 120.0  # 2 mins
+    default_timeout = 15.0
 
     def __init__(
         self,
@@ -29,8 +31,6 @@ class GameEmbed(Embed):
         if "colour" not in kwargs and "color" not in kwargs:
             kwargs['colour'] = self.default_colour
 
-        # del kwargs['title']
-        # del kwargs['description']
         super().__init__(title=title, description=description, **kwargs)
 
         self._options = []
@@ -44,7 +44,6 @@ class GameEmbed(Embed):
 
     def add_option(self, option: EmbedOption):
         if self.option_delegate:
-            print("SETTING OPTION DELGATE")
             option.set_delegate(self.option_delegate)
         self._options.append(option)
         self.add_field(
@@ -60,13 +59,18 @@ class GameEmbed(Embed):
         for opt in options:
             self.add_option(opt)
 
-    async def send_to(self, channel: Messageable, from_bot: Bot):
+    async def send_to(self,
+                      channel: Messageable,
+                      from_bot: Bot,
+                      multiple_responses=False):
         sent_msg = await channel.send(embed=self)
         listen_emojis = {}
         for opt in self.options:
             listen_emojis[opt.emoji] = opt
             await sent_msg.add_reaction(opt.emoji)
 
+        # this is a common pattern in bot world.
+        # look into bot.wait_for documentation for info
         def check(rxn, user):
             if user.id == from_bot.user.id:
                 return False
@@ -76,21 +80,45 @@ class GameEmbed(Embed):
                 return False
             return str(rxn.emoji) in listen_emojis
 
+        responses = []
+        start = dt.utcnow()
         try:
-            rxn, member = await from_bot.wait_for(
-                'reaction_add',
-                check=check,
-                timeout=self.timeout)
+            # main loop to collect responses until timeout
+            # or we get response (if multiple_responses==False)
+            while True:
 
-            option = listen_emojis.get(str(rxn.emoji))
-            if not option:
-                raise ValueError("weird")
+                # Just being safe
+                elapsed = (dt.utcnow() - start).total_seconds()
+                if elapsed > self.timeout:
+                    raise asyncio.TimeoutError()
 
-            return await option.on_selected(member, channel, from_bot)
+                # Wait for next response
+                timeout = self.timeout - elapsed
+                rxn, member = await from_bot.wait_for(
+                    'reaction_add',
+                    check=check,
+                    timeout=timeout)
+
+                # get corresponding option for response
+                option = listen_emojis.get(str(rxn.emoji))
+                if not option:
+                    raise ValueError("weird")
+
+                # call response handler
+                await option.on_selected(member, channel, from_bot)
+
+                # create response object
+                response = EmbedOptionResponse(option, member)
+                if multiple_responses:
+                    responses.append(response)
+                else:
+                    return response
 
         except asyncio.TimeoutError:
-            await sent_msg.clear_reactions()
-            await sent_msg.add_reaction(E.HOURGLASS)
+            if multiple_responses:
+                return responses
+            else:
+                return None
 
     @property
     def options(self):

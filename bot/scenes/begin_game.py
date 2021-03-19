@@ -18,7 +18,12 @@ class BeginGameScene(EmbedOptionDelegate):
         )
         options = self.create_options()
         embed.add_options(options)
-        await embed.send_to(channel, from_bot)
+        responses = await embed.send_to(
+            channel, from_bot, multiple_responses=True)
+
+        # just a demo
+        for r in responses:
+            await channel.send(f'{r.member.mention} wants to play!')
 
     def create_options(self):
         option = EmbedOption(
@@ -27,6 +32,8 @@ class BeginGameScene(EmbedOptionDelegate):
             E.THUMBS_UP)
         return [option]
 
+    ##############################
+    # EmbedOptionDelegate methods
     async def handle_option_selected(
         self,
         option,
@@ -34,5 +41,4 @@ class BeginGameScene(EmbedOptionDelegate):
         in_channel: TextChannel,
         with_bot: Bot
     ):
-        print("delegate method called")
-        await in_channel.send(f"selected {option.emoji}")
+        await in_channel.send(f"{selected_by.name} selected {option.emoji}")
