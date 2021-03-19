@@ -19,6 +19,8 @@ class CrapsBot(commands.Bot):
         # deploy. We may not need it.
         intents.members = True
 
+        self.example_state = 0
+
         super().__init__(intents=intents, **kwargs)
 
     async def on_ready(self):
@@ -28,7 +30,9 @@ class CrapsBot(commands.Bot):
                         initiator: Member,
                         opponent: Member,
                         channel: TextChannel):
+        self.example_state += 1
         await channel.send(
             f'{initiator.mention} has challenged {opponent.mention} to '
-            f'a game of Craps!'
+            f'a game of Craps!\n\n'
+            f'I have been called {self.example_state} time(s) since I was born.'
         )
