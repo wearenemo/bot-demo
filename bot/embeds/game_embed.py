@@ -9,8 +9,6 @@ from bot.embeds.embed_option import EmbedOption
 from bot.embeds.embed_option_delegate import EmbedOptionDelegate
 from bot.embeds.option_response import EmbedOptionResponse
 
-from utils import Emoji as E
-
 
 class GameEmbed(Embed):
 

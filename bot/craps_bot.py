@@ -1,5 +1,5 @@
 import discord
-from discord import Member, TextChannel
+from discord import TextChannel
 
 from discord.ext import commands
 from game.craps import Craps

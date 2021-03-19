@@ -1,7 +1,6 @@
 import os
-from discord.ext import commands
-from bot.craps_bot import CrapsBot
 
+from bot.craps_bot import CrapsBot
 
 bot = CrapsBot(command_prefix='$')
 
