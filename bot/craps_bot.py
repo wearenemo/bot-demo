@@ -7,6 +7,13 @@ from game.craps import Craps
 from bot.scenes.begin_game import BeginGameScene
 
 class CrapsBot(commands.Bot):
+    """
+    CrapsBot implements methods which are tightly coupled to
+    the commands we add in main.py
+
+    Most commands will probably just trigger "scenes" and
+    update a bit of state in a CrapsGame (or whatever) object
+    """
 
     def __init__(self, **kwargs):
         # I dont't know if we need this just playing around

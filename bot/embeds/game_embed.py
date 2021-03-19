@@ -11,6 +11,13 @@ from bot.embeds.option_response import EmbedOptionResponse
 
 
 class GameEmbed(Embed):
+    """
+    An Embed is a fancy way that bots are allowed to send messages
+
+    This subclass just implements some custom logic, primarily for
+    displaying embeds which have some set of "options" which are
+    selected when a user adds the corresponding emoji reaction.
+    """
 
     default_colour = Colour.dark_red()
     default_footer_text = "make your choice by reacting"
