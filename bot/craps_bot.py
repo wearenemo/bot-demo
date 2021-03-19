@@ -16,10 +16,6 @@ class CrapsBot(commands.Bot):
         # in order to function. When someone adds the bot to their
         # server, they will be informed of these requirements.
         intents = discord.Intents.default()
-
-        # TODO - try running the bot without this intent before
-        # deploy. We may not need it.
-        intents.members = True
         super().__init__(intents=intents, **kwargs)
 
     async def on_ready(self):
