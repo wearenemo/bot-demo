@@ -9,3 +9,6 @@
 
 ## Contributing
 To keep things easy and avoid lots of merge conflicts, let's try to stick to "one person works in `./bot` and one works in `./game` at a time"
+
+## Webhooks
+How do they work?
