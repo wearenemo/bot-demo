@@ -6,13 +6,12 @@ from bot.craps_bot import CrapsBot
 bot = CrapsBot(command_prefix='$')
 
 
-@bot.command()
-async def challenge(ctx, against: commands.MemberConverter):
+@bot.command(aliases=["throwdown"])
+async def begin(ctx):
     """
-    Challenge member to a game of craps
+    Begin a game of craps.
     """
-    print('got challenge command')
-    await bot.challenge(ctx.author, against, ctx.channel)
+    await bot.begin(ctx.channel)
 
 # ask andy for the token
 bot.run(os.getenv("CRAPS_TOKEN"))

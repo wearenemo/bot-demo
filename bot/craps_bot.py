@@ -4,6 +4,8 @@ from discord import Member, TextChannel
 from discord.ext import commands
 from game.craps import Craps
 
+from bot.scenes.begin_game import BeginGameScene
+
 class CrapsBot(commands.Bot):
 
     def __init__(self, **kwargs):
@@ -18,21 +20,13 @@ class CrapsBot(commands.Bot):
         # TODO - try running the bot without this intent before
         # deploy. We may not need it.
         intents.members = True
-
-        self.example_state = 0
-
         super().__init__(intents=intents, **kwargs)
 
     async def on_ready(self):
         print("CrapsBot receiving crappy commands!")
 
-    async def challenge(self,
-                        initiator: Member,
-                        opponent: Member,
-                        channel: TextChannel):
-        self.example_state += 1
-        await channel.send(
-            f'{initiator.mention} has challenged {opponent.mention} to '
-            f'a game of Craps!\n\n'
-            f'I have been called {self.example_state} time(s) since I was born.'
-        )
+    async def begin(self, channel: TextChannel):
+        """
+        Starts a a game in channel
+        """
+        await BeginGameScene().show(channel, self)
