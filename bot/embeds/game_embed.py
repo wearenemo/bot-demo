@@ -22,6 +22,7 @@ class GameEmbed(Embed):
     default_colour = Colour.dark_red()
     default_footer_text = "make your choice by reacting"
     default_timeout = 15.0
+    dice_img_url = "https://i.imgur.com/SK01Ya6.jpg"
 
     def __init__(
         self,
@@ -37,6 +38,7 @@ class GameEmbed(Embed):
             kwargs['colour'] = self.default_colour
 
         super().__init__(title=title, description=description, **kwargs)
+        self.set_image(url=self.dice_img_url)
 
         self._options = []
         self._option_delegate = option_delegate

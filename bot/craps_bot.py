@@ -5,7 +5,7 @@ from discord.ext import commands
 from game.craps import CrapsManager
 from bot.bot_dealer_delegate import BotDealerDelegate
 
-# from bot.scenes.begin_game import BeginGameScene
+from bot.scenes.begin_game import BeginGameScene
 
 
 class CrapsBot(commands.Bot):
@@ -50,6 +50,5 @@ class CrapsBot(commands.Bot):
                 return await channel.send(
                     f"This isn't where we play craps! Try "
                     f"#{self.CRAPS_CHANNEL_NAME}")
-        # await BeginGameScene().show(channel, table, self)
-        await channel.send("look at `stdout` for some gameplay action")
+        await BeginGameScene().show(channel, self)
         await table.dealer.play_game()

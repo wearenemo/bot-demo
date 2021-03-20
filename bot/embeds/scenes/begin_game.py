@@ -16,8 +16,13 @@ class BeginGameEmbed(GameEmbed):
         self.add_options(options)
 
     def create_options(self):
-        option = EmbedOption(
+        option1 = EmbedOption(
             "Signup",
             "sign up to play the game",
             E.THUMBS_UP)
-        return [option]
+
+        option2 = EmbedOption(
+            "Decline",
+            "stop losing so much money",
+            E.THUMBS_DOWN)
+        return [option1, option2]
