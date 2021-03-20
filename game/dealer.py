@@ -28,7 +28,6 @@ class Dealer:
         rolled = None
         bets = None
         while not game.over:
-            print("\ngame is NOT over! Let's do it again!")
             if rolled:
                 bets, payouts = self._payout_bets(bets, rolled)
                 await self.delegate.notify_payouts(payouts, self.table, rolled)
@@ -37,7 +36,6 @@ class Dealer:
             await self.delegate.collect_bets(self.table, pregame=pregame)
             await asyncio.sleep(SLEEP)
             dice = self._get_dice()
-            print('new dice\n  ', dice)
             await asyncio.sleep(SLEEP)
             rolled = await self.delegate.get_roll(
                 dice,
@@ -45,7 +43,6 @@ class Dealer:
                 pregame)
             if rolled is not dice:
                 raise DealerException("cheater")
-            print('updating game with roll\n  ', rolled)
             await asyncio.sleep(SLEEP)
             game.update(rolled)
         bets, payouts = self._payout_bets(bets, rolled, outcome=game.outcome)

@@ -3,7 +3,7 @@ from discord import TextChannel
 
 from discord.ext import commands
 from game.craps import CrapsManager
-from game.dealer_delegate import DealerDelegate
+from bot.bot_dealer_delegate import BotDealerDelegate
 
 # from bot.scenes.begin_game import BeginGameScene
 
@@ -17,6 +17,8 @@ class CrapsBot(commands.Bot):
     update a bit of state in a CrapsGame (or whatever) object
     """
 
+    CRAPS_CHANNEL_NAME = "craps"
+
     def __init__(self, **kwargs):
 
         # this is where we declare what permissions the bot requires
@@ -29,17 +31,25 @@ class CrapsBot(commands.Bot):
 
     async def on_ready(self):
         for g in self.guilds:
-            print('creating table for', g)
-            self.craps_manager.create_table(6, g.id, DealerDelegate())
+            for c in g.channels:
+                if c.name == self.CRAPS_CHANNEL_NAME:
+                    print('creating table for', g)
+                    delegate = BotDealerDelegate(self, c)
+                    self.craps_manager.create_table(6, g.id, delegate)
         print("CrapsBot receiving crappy commands!")
 
     async def begin(self, channel: TextChannel):
         """
         Starts a a game in channel
         """
-        print('craps manager tables are:')
         print(self.craps_manager._tables)
         table = self.craps_manager.table_for(channel.guild.id)
+        delegate = table.dealer.delegate
+        if isinstance(delegate, BotDealerDelegate):
+            if delegate.display_channel != channel:
+                return await channel.send(
+                    f"This isn't where we play craps! Try "
+                    f"#{self.CRAPS_CHANNEL_NAME}")
         # await BeginGameScene().show(channel, table, self)
         await channel.send("look at `stdout` for some gameplay action")
         await table.dealer.play_game()

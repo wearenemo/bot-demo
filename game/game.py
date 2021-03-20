@@ -14,7 +14,8 @@ class Game:
         return bool(self.outcome)
 
     def update(self, roll: Dice):
-        if roll.values[0] == 1:
-            if roll.values[1] == 1:
-                print("SNAKE EYES")
-                self.outcome = "SNAKE EYES"
+        """
+        TODO - get this logic right
+        """
+        if roll.values[0] == roll.values[1]:
+            self.outcome = "Rolled doubles!"
