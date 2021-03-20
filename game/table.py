@@ -3,9 +3,14 @@ import random
 from game.exceptions import SeatsTaken, DoesNotExist, AlreadyExists
 from game.dealer import Dealer
 from game.player import Player
+from game.dealer_delegate import DealerDelegate
 
 
 class _Seat:
+    """
+    "private" class - helpful for Table
+    """
+
     def __init__(self, index, player=None):
         self.index = index
         self._player = player
@@ -29,7 +34,11 @@ class _Seat:
 
 
 class Table:
-    def __init__(self, num_seats, _id, dealer_delegate):
+
+    def __init__(self,
+                 num_seats: int,
+                 _id: int,
+                 dealer_delegate: DealerDelegate):
         self._seats = [_Seat(i) for i in range(num_seats)]
         self._players = {}
         self._id = _id

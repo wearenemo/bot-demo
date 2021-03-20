@@ -4,3 +4,4 @@ class SeatsTaken(CrapsManagerException): pass;
 class DoesNotExist(CrapsManagerException): pass;
 class AlreadyExists(CrapsManagerException): pass;
 class DealerException(CrapsException): pass;
+class InsufficientFunds(CrapsManagerException): pass;

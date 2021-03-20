@@ -1,15 +1,19 @@
 from game.table import Table
 from game.exceptions import AlreadyExists
+from game.dealer_delegate import DealerDelegate
 
 
 class CrapsManager:
     def __init__(self):
         self._tables = {}
 
-    def table_for(self, id):
+    def table_for(self, id: int):
         return self._tables.get(id)
 
-    def create_table(self, num_seats, _id, dealer_delegate):
+    def create_table(self,
+                     num_seats: int,
+                     _id: int,
+                     dealer_delegate: DealerDelegate):
         if _id in self._tables:
             raise AlreadyExists('table already exists')
         table = Table(num_seats, _id, dealer_delegate)

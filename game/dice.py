@@ -6,8 +6,8 @@ from game.exceptions import DealerException
 class Dice:
     sides = 6
 
-    def __init__(self, N):
-        self._values = [None for i in range(N)]
+    def __init__(self, num_dice: int):
+        self._values = [None for i in range(num_dice)]
         self._rolled = False
 
     @property

@@ -1,6 +1,10 @@
 from game.dice import Dice
 
+
 class Game:
+    """
+    Handles main game logic (but not betting)
+    """
 
     def __init__(self):
         self.outcome = None
