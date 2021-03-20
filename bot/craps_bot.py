@@ -2,9 +2,11 @@ import discord
 from discord import TextChannel
 
 from discord.ext import commands
-from game.craps import Craps
+from game.craps import CrapsManager
+from game.dealer_delegate import DealerDelegate
 
-from bot.scenes.begin_game import BeginGameScene
+# from bot.scenes.begin_game import BeginGameScene
+
 
 class CrapsBot(commands.Bot):
     """
@@ -16,8 +18,6 @@ class CrapsBot(commands.Bot):
     """
 
     def __init__(self, **kwargs):
-        # I dont't know if we need this just playing around
-        self.craps = Craps()
 
         # this is where we declare what permissions the bot requires
         # in order to function. When someone adds the bot to their
@@ -25,11 +25,21 @@ class CrapsBot(commands.Bot):
         intents = discord.Intents.default()
         super().__init__(intents=intents, **kwargs)
 
+        self.craps_manager = CrapsManager()
+
     async def on_ready(self):
+        for g in self.guilds:
+            print('creating table for', g)
+            self.craps_manager.create_table(6, g.id, DealerDelegate())
         print("CrapsBot receiving crappy commands!")
 
     async def begin(self, channel: TextChannel):
         """
         Starts a a game in channel
         """
-        await BeginGameScene().show(channel, self)
+        print('craps manager tables are:')
+        print(self.craps_manager._tables)
+        table = self.craps_manager.table_for(channel.guild.id)
+        # await BeginGameScene().show(channel, table, self)
+        await channel.send("look at `stdout` for some gameplay action")
+        await table.dealer.play_game()
