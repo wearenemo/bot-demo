@@ -37,6 +37,7 @@ class Dealer:
                 raise DealerException("cheater")
 
             roll_outcome = game.update(rolled)
+            self.table.point = game.point
             bets, payouts = self._payout_bets(
                 bets, rolled, roll_outcome)
 

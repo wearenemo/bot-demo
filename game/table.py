@@ -44,6 +44,7 @@ class Table:
         self._id = _id
         self.dealer = Dealer(self, dealer_delegate)
         self.button_position = 0
+        self.point = None
 
     def advance_button(self):
         player_found = None
