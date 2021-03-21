@@ -50,7 +50,7 @@ class Dealer:
             await self.delegate.collect_bets(self.table, comeout)
 
         await self.delegate.game_over(
-            game.outcome, self.table, payouts, rolled, shooter_id)
+            roll_outcome, self.table, payouts, rolled, shooter_id)
 
     #################
     # Private methods
