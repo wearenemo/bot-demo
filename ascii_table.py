@@ -3,25 +3,25 @@ from utils import Text as T
 
 class AsciiTable:
     """
-       ===============
-      |               |
-      |               |
-     □|               |□
-      |     CRAPPY    |
-      |     CASINO    |
-     □|               |□
-      |               |
-      |               |
-     X|               |□
-      |               |
-      |               |
-     □|               |□
-      |     CRAPPY    |
-      |     CASINO    |
-     □|               |9
-      |               |
-      |               |
-       ===============
+        ==============
+       |              |
+       |              |
+     _ |              | _
+       |    CRAPPY    |
+       |    CASINO    |
+     1 |●             | _
+       |              |
+       |--            |
+     ● |D |    8      | _
+       |--            |
+       |              |
+     _ |              | _
+       |    CRAPPY    |
+       |    CASINO    |
+     _ |              | _
+       |              |
+       |              |
+        ==============
     """
 
     top_bottom_row = [
@@ -171,5 +171,5 @@ class AsciiTable:
         d2 = cls.dice[dice.values[1]]
         s = ""
         for d1_row, d2_row in zip(d1, d2):
-            s += f'  {d1_row}   {d2_row}\n'
+            s += f'     {d1_row}  {d2_row}\n'
         return T.mono(s)
