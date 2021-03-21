@@ -15,6 +15,7 @@ class BeginGameScene(EmbedOptionDelegate):
         # just a demo
         for r in responses:
             await channel.send(f'{r.member.mention} wants to play!')
+        return responses
 
     ##############################
     # EmbedOptionDelegate methods

@@ -16,7 +16,7 @@ class _Seat:
         self._player = player
 
     def sit(self, player):
-        if not self.is_empty:
+        if self.occupied:
             raise SeatsTaken("seat's taken")
         self._player = player
 
@@ -43,6 +43,21 @@ class Table:
         self._players = {}
         self._id = _id
         self.dealer = Dealer(self, dealer_delegate)
+        self.button_position = 0
+
+    def advance_button(self):
+        player_found = None
+        original_position = self.button_position
+        while not player_found:
+            self.button_position = (self.button_position + 1) % self.num_seats
+            if self.button_position == original_position:
+                player_found = self._seats[original_position].player
+                break
+            player = self._seats[self.button_position].player
+            if player:
+                player_found = player
+                break
+        return player_found
 
     def player_for(self, player_id):
         return self._players.get(player_id)

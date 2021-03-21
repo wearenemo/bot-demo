@@ -1,11 +1,11 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class Bet:
-    def __init__(self, amount, player_id: int):
-        self.amount = amount
-        self.player_id = player_id
+    amount: float
+    player_id: int
 
-
-class ComeBet(Bet):
-    """
-    an example of a concrete subclass (not fully implemented of course)
-    """
-    pass
+class PassBet(Bet): pass;
+class DontPassBet(Bet): pass;
+class ComeBet(Bet): pass;

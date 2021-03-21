@@ -45,3 +45,4 @@ class Emoji:
     QUIET_MONKEY = '🙊'
     ENVELOPE     = '✉️'
     PLAY         = '▶️'
+    DIE          = '🎲'

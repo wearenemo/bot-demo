@@ -18,6 +18,10 @@ class Dice:
     def values(self):
         return self._values
 
+    @property
+    def total(self):
+        return sum(self.values)
+
     def __str__(self):
         s = [str(v) if v else "?" for v in self.values]
         return "Dice<" + ", ".join(s) + ">"

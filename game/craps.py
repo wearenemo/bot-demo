@@ -7,13 +7,15 @@ class CrapsManager:
     def __init__(self):
         self._tables = {}
 
-    def table_for(self, id: int):
-        return self._tables.get(id)
+    def table_for(self, _id: int):
+        print('getting table with id', _id)
+        return self._tables.get(_id)
 
     def create_table(self,
                      num_seats: int,
                      _id: int,
                      dealer_delegate: DealerDelegate):
+        print('creating table with id', _id)
         if _id in self._tables:
             raise AlreadyExists('table already exists')
         table = Table(num_seats, _id, dealer_delegate)

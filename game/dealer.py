@@ -1,6 +1,6 @@
 from game.dice import Dice
 from game.bet import Bet
-from game.game import Game
+from game.game import Game, RollOutcome
 from game.exceptions import DealerException
 from game.dealer_delegate import DealerDelegate
 
@@ -21,34 +21,36 @@ class Dealer:
     ##################
     # Public methods
 
-    async def play_game(self):
+    async def play_game(self, shooter_id: int):
         print("LETS PLAY CRAPS")
         await asyncio.sleep(SLEEP)
         game = Game()
-        rolled = None
-        bets = None
-        while not game.over:
-            if rolled:
-                bets, payouts = self._payout_bets(bets, rolled)
-                await self.delegate.notify_payouts(payouts, self.table, rolled)
-                await asyncio.sleep(SLEEP)
-            pregame = rolled is None
-            await self.delegate.collect_bets(self.table, pregame=pregame)
-            await asyncio.sleep(SLEEP)
+        bets = await self.delegate.collect_bets(self.table, True)
+        print("GOT BETS", bets)
+        while True:
+            comeout = game.point is None
             dice = self._get_dice()
-            await asyncio.sleep(SLEEP)
             rolled = await self.delegate.get_roll(
-                dice,
-                self.table,
-                pregame)
+                dice, shooter_id, self.table, comeout)
+
             if rolled is not dice:
                 raise DealerException("cheater")
-            await asyncio.sleep(SLEEP)
-            game.update(rolled)
-        bets, payouts = self._payout_bets(bets, rolled, outcome=game.outcome)
+
+            roll_outcome = game.update(rolled)
+            bets, payouts = self._payout_bets(
+                bets, rolled, roll_outcome)
+
+            await self.delegate.notify_payouts(
+                payouts, self.table, rolled, roll_outcome)
+
+            if roll_outcome == RollOutcome.PointMiss7:
+                shooter_id = await self.delegate.next_shooter(self.table)
+                break
+
+            await self.delegate.collect_bets(self.table, comeout)
+
         await self.delegate.game_over(
-            game.outcome, self.table, payouts, rolled)
-        return game.outcome
+            game.outcome, self.table, payouts, rolled, shooter_id)
 
     #################
     # Private methods

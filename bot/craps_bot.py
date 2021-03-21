@@ -7,6 +7,8 @@ from bot.bot_dealer_delegate import BotDealerDelegate
 
 from bot.scenes.begin_game import BeginGameScene
 
+from game.exceptions import AlreadyExists, SeatsTaken
+
 
 class CrapsBot(commands.Bot):
     """
@@ -50,5 +52,19 @@ class CrapsBot(commands.Bot):
                 return await channel.send(
                     f"This isn't where we play craps! Try "
                     f"#{self.CRAPS_CHANNEL_NAME}")
-        await BeginGameScene().show(channel, self)
-        await table.dealer.play_game()
+        responses = await BeginGameScene().show(channel, self)
+        for r in responses:
+            try:
+                player = table.create_player(
+                    r.member.id, r.member.display_name)
+                table.sit(player.id)
+                await channel.send(
+                    f'{r.member.mention} is seated at the table!')
+            except AlreadyExists:
+                continue
+            except SeatsTaken:
+                await channel.send(
+                    f"Sorry {r.member.mention}, the table is full.")
+
+        player = table.advance_button()
+        await table.dealer.play_game(player.id)
