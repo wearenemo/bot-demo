@@ -1,3 +1,7 @@
+from utils import Text as T
+
+from ascii_table import AsciiTable
+
 class PayoutBetsScene:
     async def show(
         self,
@@ -8,5 +12,5 @@ class PayoutBetsScene:
         outcome,
         channel
     ):
-        await channel.send(
-            f'Outcome was {outcome} from {dice}.')
+        s = AsciiTable.show_dice(dice) + T.bold(outcome.value)
+        await channel.send(s)

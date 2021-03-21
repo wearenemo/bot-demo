@@ -12,6 +12,10 @@ class Text:
         return f"```\n{s}\n```"
 
     @staticmethod
+    def inline_mono(s):
+        return f'`{s}`'
+
+    @staticmethod
     def block_quote(s: str):
         """
         blockquote string
@@ -32,6 +36,10 @@ class Text:
         line_quote = "> "
         s = line_quote + s
         return line_quote.join(s.splitlines())
+
+    @staticmethod
+    def underline(s):
+        return f"\_\_{s}\_\_"
 
 
 class Emoji:

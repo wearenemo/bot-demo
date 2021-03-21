@@ -5,13 +5,17 @@ from datetime import datetime as dt
 from game.bet import Bet, ComeBet, PassBet
 
 from utils import Emoji as E
+from utils import Text as T
+
+from ascii_table import AsciiTable
 
 class CollectBetsScene:
 
+    bets = ['come', 'pass']
+    timeout = 10.0
+
     def __init__(self):
         self.new_bets = []
-
-    bets = set(['come', 'pass'])
 
     async def handle_bet(self, bet, msg):
         self.new_bets.append(bet)
@@ -32,10 +36,21 @@ class CollectBetsScene:
                 return False
             return False
 
-        await display_channel.send(
-            'place your bets!')
+        ascii_table = AsciiTable.from_table(table)
 
-        timeout = 15.0
+        place_bets = T.bold("Place your bets!")
+        place_bets += f" You have {self.timeout:.0f} seconds."
+
+        valid_bets = ", ".join([T.inline_mono(b) for b in self.bets])
+        valid_bets = T.block_quote("Valid bets are: " + valid_bets)
+
+        bet_msg = await display_channel.send(
+            f'{ascii_table}\n'
+            f'{place_bets}\n'
+            f'{valid_bets}\n'
+        )
+
+        timeout = self.timeout
         start = dt.utcnow()
         while True:
             try:
@@ -56,7 +71,6 @@ class CollectBetsScene:
                     bet = Bet(amount, u_id)
                 await self.handle_bet(bet, m)
             except asyncio.TimeoutError:
-                await display_channel.send(
-                    f'got {len(self.new_bets)} bets')
+                await bet_msg.add_reaction(E.HOURGLASS)
                 break
         return self.new_bets

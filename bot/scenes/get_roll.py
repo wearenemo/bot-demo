@@ -3,6 +3,9 @@ from utils import Emoji as E
 
 
 class GetRollScene:
+
+    timeout = 10.0
+
     async def show(
         self,
         bot,
@@ -13,8 +16,8 @@ class GetRollScene:
         display_channel
     ):
         user = await bot.fetch_user(shooter_id)
-        await display_channel.send(
-            f'Waiting on `roll` command from {user.display_name}'
+        waiting = await display_channel.send(
+            f'Waiting {self.timeout:.0f} seconds for {user.mention} to `roll`...'
         )
 
         def check(m):
@@ -26,15 +29,14 @@ class GetRollScene:
 
         try:
             m = await bot.wait_for(
-                'message', check=check, timeout=10.0)
+                'message', check=check, timeout=self.timeout)
             await m.add_reaction(E.DIE)
         except asyncio.TimeoutError:
-            await display_channel.send(
-                'You are taking too long to roll. '
-                'Let me roll for you.'
-            )
+            async with display_channel.typing():
+                await waiting.add_reaction(E.HOURGLASS)
+                asyncio.sleep(0.5)
+                new_content = waiting.content + " nevermind, I can do it for you."
+                await waiting.edit(content=new_content)
+            await asyncio.sleep(1.0)
         dice.roll()
-        await display_channel.send(
-            f'``` ROLLED\n\t{dice} ```'
-        )
         return dice

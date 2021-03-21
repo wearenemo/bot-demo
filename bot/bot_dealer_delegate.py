@@ -1,3 +1,5 @@
+import asyncio
+
 from discord import TextChannel
 
 from discord.ext.commands import Bot
@@ -25,8 +27,9 @@ class BotDealerDelegate(DealerDelegate):
             self.bot, table, comeout, self.display_channel)
 
     async def notify_payouts(self, payouts, table, dice, roll_outcome):
-        return await PayoutBetsScene().show(
+        await PayoutBetsScene().show(
             self.bot, payouts, table, dice, roll_outcome, self.display_channel)
+        await asyncio.sleep(3.0)
 
     async def get_roll(self, dice, shooter_id, table, first_roll: bool):
         return await GetRollScene().show(

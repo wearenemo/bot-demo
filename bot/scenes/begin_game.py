@@ -1,8 +1,12 @@
+import asyncio
+
 from discord import TextChannel, Member
 from discord.ext.commands import Bot
 
 from bot.embeds.embed_option_delegate import EmbedOptionDelegate
 from bot.embeds.scenes.begin_game import BeginGameEmbed
+
+from utils import Text as T
 
 
 class BeginGameScene(EmbedOptionDelegate):
@@ -12,9 +16,12 @@ class BeginGameScene(EmbedOptionDelegate):
         responses = await embed.send_to(
             channel, from_bot, multiple_responses=True)
 
-        # just a demo
-        for r in responses:
-            await channel.send(f'{r.member.mention} wants to play!')
+        bet_str = 'Place a bet during a betting round to sit at an empty seat'
+        lets_play = "LET'S PLAY CRAPS!"
+        await channel.send(
+            f'{T.bold(lets_play)}\n'
+            f'{T.block_quote(bet_str)}'
+        )
         return responses
 
     ##############################
@@ -27,4 +34,4 @@ class BeginGameScene(EmbedOptionDelegate):
         in_channel: TextChannel,
         with_bot: Bot
     ):
-        await in_channel.send(f"{selected_by.name} selected {option.emoji}")
+        print(f"{selected_by.name} selected {option.emoji}")

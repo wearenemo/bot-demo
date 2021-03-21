@@ -59,6 +59,10 @@ class Table:
                 break
         return player_found
 
+    @property
+    def seats(self):
+        return self._seats
+
     def player_for(self, player_id):
         return self._players.get(player_id)
 
