@@ -44,6 +44,9 @@ class CrapsBot(commands.Bot):
                     delegate = BotDealerDelegate(self, c)
                     self.craps_manager.create_table(
                         self.SEATS_PER_TABLE, g.id, delegate)
+                    break
+            else:
+                raise Exception(f'Channel {self.CRAPS_CHANNEL_NAME} does not exist')
         print("CrapsBot receiving crappy commands!")
 
     async def begin(self, channel: TextChannel):

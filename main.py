@@ -1,8 +1,18 @@
+import argparse
 import os
 
 from bot.craps_bot import CrapsBot
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--channel')
+args = parser.parse_args()
+
+
 bot = CrapsBot(command_prefix='$')
+if args.channel:
+    bot.CRAPS_CHANNEL_NAME = args.channel
+
 
 ###################
 # Bot Commands
@@ -25,4 +35,4 @@ async def begin(ctx):
     await bot.begin(ctx.channel)
 
 # ask andy for the token
-bot.run(os.getenv("CRAPS_TOKEN"))
+bot.run(os.environ["CRAPS_TOKEN"])
