@@ -1,4 +1,4 @@
-from game.bets import Bet
+from game.bets import Bet, BetType
 from game.dice import Dice
 from game.player_payout import PlayerPayout
 
@@ -11,7 +11,7 @@ class DealerDelegate:
     async def next_shooter(self) -> int:
         raise NotImplementedError()
 
-    async def collect_bets(self, table, comeout: bool) -> [Bet]:
+    async def collect_bets(self, table, allowed: [BetType]) -> [Bet]:
         raise NotImplementedError()
 
     async def notify_payouts(

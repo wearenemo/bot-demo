@@ -4,6 +4,7 @@ from game.bets import Bet, BetType, EvenPayout
 class PassBetType(BetType):
 
     name = "Pass"
+    cmd_name = "pass"
 
     def __init__(self):
         super().__init__(
@@ -29,3 +30,5 @@ class PassBetType(BetType):
 class PassBet(Bet):
     def __init__(self, amount, player_id):
         super().__init__(PassBetType(), amount, player_id)
+
+PassBetType.bet_class = PassBet

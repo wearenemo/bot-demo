@@ -9,6 +9,9 @@ class BetType:
     When a player makes a bet, they create a PlayerBet which
     has an amount and a bet_type.
     """
+    name = "Bet"
+    cmd_name = "bet"
+    bet_class = None
 
     def __init__(
         self,
@@ -45,12 +48,6 @@ class BetType:
 
     def __repr__(self):
         return self.__str__()
-
-    # override this for something with a weird name like
-    # "Don't Pass"
-    @property
-    def cmd_name(self):
-        return self.name.lower()
 
     # These methods are meant to be primary customization
     # site for subclasses

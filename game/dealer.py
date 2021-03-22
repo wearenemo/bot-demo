@@ -24,7 +24,7 @@ class Dealer:
 
     async def play_game(self, shooter_id: int):
         game = Game()
-        bets = await self.delegate.collect_bets(self.table, True)
+        bets = await self.delegate.collect_bets(self.table, self._allowed_bet_types())
         self._verify_and_place_bets(bets)
         while True:
             comeout = game.point is None
@@ -47,7 +47,7 @@ class Dealer:
                 shooter_id = await self.delegate.next_shooter(self.table)
                 break
 
-            bets = await self.delegate.collect_bets(self.table, comeout)
+            bets = await self.delegate.collect_bets(self.table, self._allowed_bet_types())
             self._verify_and_place_bets(bets)
 
         await self.delegate.game_over(
@@ -55,6 +55,18 @@ class Dealer:
 
     #################
     # Private methods
+
+    def _allowed_bet_types(self):
+        allowed = []
+        prepoint = self.table.point is None
+        for bt in self.allowed_bet_types:
+            if prepoint:
+                if bt.prepoint_placeable:
+                    allowed.append(bt)
+            else:
+                if bt.postpoint_placeable:
+                    allowed.append(bt)
+        return allowed
 
     def _verify_and_place_bets(self, bets):
         for b in bets:

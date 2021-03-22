@@ -22,9 +22,9 @@ class BotDealerDelegate(DealerDelegate):
             return None
         return next_player.id
 
-    async def collect_bets(self, table, comeout):
+    async def collect_bets(self, table, allowed):
         return await CollectBetsScene().show(
-            self.bot, table, comeout, self.display_channel)
+            self.bot, table, allowed, self.display_channel)
 
     async def notify_payouts(self, payouts, table, dice, roll_outcome):
         await PayoutBetsScene().show(
