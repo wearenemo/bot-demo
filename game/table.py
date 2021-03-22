@@ -109,3 +109,7 @@ class Table:
     @property
     def full(self):
         return self.seats_available == 0
+
+    @property
+    def empty(self):
+        return self.seats_available == self.num_seats

@@ -22,7 +22,21 @@ class Dealer:
     ##################
     # Public methods
 
+    async def play(self, shooter_id: int):
+        """
+        Keep playing as long as the table has a player
+        """
+        while not self.table.empty:
+            await self.play_game(shooter_id)
+            shooter = self.table.advance_button()
+            if not shooter:
+                return
+            shooter_id = shooter.id
+
     async def play_game(self, shooter_id: int):
+        """
+        Play for one shooter's turn
+        """
         game = Game()
         bets = await self.delegate.collect_bets(self.table, self._allowed_bet_types())
         self._verify_and_place_bets(bets)

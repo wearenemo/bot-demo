@@ -11,6 +11,5 @@ class GameOverScene:
         next_shooter_id,
         channel
     ):
-        s = T.bold('GAME OVER!')
-        s += f'\n\n{T.inline_mono("$begin")} to play again'
+        s = T.bold('Turns over! Next shooter\'s turn!')
         await channel.send(s)

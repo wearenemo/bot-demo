@@ -98,4 +98,4 @@ class CrapsBot(commands.Bot):
                 f"{shooter_member.mention} has the dice. Let's hope they're hot!\n"
             )
         await asyncio.sleep(1.5)
-        await table.dealer.play_game(player.id)
+        await table.dealer.play(player.id)
