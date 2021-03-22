@@ -25,8 +25,11 @@ class CollectBetsScene:
         allowed_bets = [bt.cmd_name for bt in allowed_bet_types]
 
         if not allowed_bets:
+            no_bets = T.block_quote("No allowed bets right now!")
+            ascii_table = AsciiTable.from_table(table)
             await display_channel.send(
-                T.block_quote("No allowed bets right now!"))
+                f'{ascii_table}\n'
+                f'{no_bets}\n')
             return []
 
         def check(m):
