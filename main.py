@@ -1,8 +1,18 @@
+import argparse
 import os
 
 from bot.craps_bot import CrapsBot
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--channel')
+args = parser.parse_args()
+
+
 bot = CrapsBot(command_prefix='$')
+if args.channel:
+    bot.CRAPS_CHANNEL_NAME = args.channel
+
 
 ###################
 # Bot Commands
