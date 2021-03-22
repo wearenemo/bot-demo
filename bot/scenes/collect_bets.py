@@ -2,7 +2,7 @@ import asyncio
 
 from datetime import datetime as dt
 
-from game.bet import Bet, ComeBet, PassBet
+from game import bets
 
 from utils import Emoji as E
 from utils import Text as T
@@ -11,7 +11,7 @@ from ascii_table import AsciiTable
 
 class CollectBetsScene:
 
-    bets = ['come', 'pass']
+    allowed_bets = ['come', 'pass']
     timeout = 10.0
 
     def __init__(self):
@@ -26,7 +26,7 @@ class CollectBetsScene:
         def check(m):
             tokens = m.content.lower().strip().split()
             bet_type = tokens[0]
-            if bet_type not in self.bets:
+            if bet_type not in self.allowed_bets:
                 return False
             try:
                 amount = tokens[1]
@@ -41,7 +41,7 @@ class CollectBetsScene:
         place_bets = T.bold("Place your bets!")
         place_bets += f" You have {self.timeout:.0f} seconds."
 
-        valid_bets = ", ".join([T.inline_mono(b) for b in self.bets])
+        valid_bets = ", ".join([T.inline_mono(b) for b in self.allowed_bets])
         valid_bets = T.block_quote("Valid bets are: " + valid_bets)
 
         bet_msg = await display_channel.send(
@@ -63,12 +63,8 @@ class CollectBetsScene:
                 bet_type = tokens[0]
                 amount = float(tokens[1])
                 u_id = m.author.id
-                if bet_type == 'come':
-                    bet = ComeBet(amount, u_id)
-                elif bet_type == 'pass':
-                    bet = PassBet(amount, u_id)
-                else:
-                    bet = Bet(amount, u_id)
+                if bet_type == 'pass':
+                    bet = bets.PassBet(amount, u_id)
                 await self.handle_bet(bet, m)
             except asyncio.TimeoutError:
                 await bet_msg.add_reaction(E.HOURGLASS)
