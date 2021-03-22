@@ -55,7 +55,6 @@ class CollectBetsScene:
         while True:
             try:
                 left = timeout - (dt.utcnow() - start).total_seconds()
-                print('time left', left)
                 if left < 0.0:
                     raise asyncio.TimeoutError()
                 m = await bot.wait_for('message', check=check, timeout=left)

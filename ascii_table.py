@@ -147,11 +147,7 @@ class AsciiTable:
 
                 coin_str = f'[${s.player.coins:.0f}'
                 coin_str += f'|${s.player.coins_on_table:.0f}]'
-                player_str += (
-                    f'\n {p} -'
-                    f' {s.player.name} '
-                    f'{coin_str}'
-                )
+                player_str += (f'\n {p} - {str(s.player)}')
             else:
                 empty_seats.append(i)
 

@@ -13,9 +13,14 @@ class Player:
     def coins_on_table(self):
         return sum([b.amount for b in self.active_bets])
 
+    def __str__(self):
+        s = f'{self.name} '
+        s += f'[${self.coins:.0f}|${self.coins_on_table:.0f}]'
+        return s
+
     @property
     def active_bets(self):
-        return self._active_bets
+        return self._active_bets[:]
 
     @property
     def coins(self):
@@ -29,9 +34,13 @@ class Player:
         return False
 
     def pay(self, coins: float):
+        if coins < 0.0:
+            raise ValueError("Can't pay negative money")
         self._coins += coins
 
     def collect(self, coins: float):
+        if coins < 0.0:
+            raise ValueError("Can't collect negative money")
         if coins > self._coins:
             raise InsufficientFunds("can't collect more than player has")
         self._coins -= coins
@@ -42,7 +51,6 @@ class Player:
         When a player places a bet, they "withdraw" coins from themself
         and put them into their "active bets".
         """
-        print(f'place bet called on {self.name} for bet {bet}')
         try:
             wagered = self.collect(bet.amount)
             self._active_bets.append(bet)
@@ -72,7 +80,6 @@ class Player:
             for i, b in enumerate(self._active_bets):
                 if b.bet_type.name == bet_type_name:
                     found = True
-                    print('found bet!')
                     del self._active_bets[i]
                     break
         print('my active bets are now:', self.active_bets)

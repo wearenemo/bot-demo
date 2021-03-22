@@ -36,9 +36,9 @@ class Dealer:
                 raise DealerException("cheater")
 
             roll_outcome = game.update(rolled)
-            self.table.point = game.point
             payouts = self._payout_bets(
                 self.table.bets, rolled, roll_outcome, self.table.point)
+            self.table.point = game.point
 
             await self.delegate.notify_payouts(
                 payouts, self.table, rolled, roll_outcome)
@@ -122,11 +122,12 @@ class Dealer:
                 amount = win_payout.payout_for(bet.amount)
             else:
                 amount = -bet.amount
-            player_payout = PlayerPayout(
-                amount,
-                bet.bet_type.name,
-                bet.player_id)
-            player_payouts.append(player_payout)
+            if win_payout or lose_payout:
+                player_payout = PlayerPayout(
+                    amount,
+                    bet.bet_type.name,
+                    bet.player_id)
+                player_payouts.append(player_payout)
 
         # 3 resolve payouts
         for pp in player_payouts:
@@ -143,5 +144,5 @@ class Dealer:
             else:
                 player.destroy_bets(pp.bet_type_name)
 
-        # 4 return the bets and payouts
-        return bets, player_payouts
+        # 4 return payouts
+        return player_payouts
