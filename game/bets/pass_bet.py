@@ -2,9 +2,12 @@ from game.bets import Bet, BetType, EvenPayout
 
 
 class PassBetType(BetType):
+
+    name = "Pass"
+
     def __init__(self):
         super().__init__(
-            "Pass",
+            self.name,
             EvenPayout(),
             prepoint_placeable=True,
             prepoint_payable=True,

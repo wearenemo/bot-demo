@@ -1,4 +1,5 @@
 from game.exceptions import InsufficientFunds
+from game.bets import PassBetType
 
 
 class Player:
@@ -20,6 +21,13 @@ class Player:
     def coins(self):
         return self._coins
 
+    @property
+    def has_pass_bet(self):
+        for b in self.active_bets:
+            if b.name == PassBetType.name:
+                return True
+        return False
+
     def pay(self, coins: float):
         self._coins += coins
 
@@ -36,9 +44,10 @@ class Player:
         """
         print(f'place bet called on {self.name} for bet {bet}')
         try:
-            self.collect(bet.amount)
+            wagered = self.collect(bet.amount)
             self._active_bets.append(bet)
             print(f'now i have {self.coins} coins')
+            return wagered
         except InsufficientFunds:
             print('error!')
             raise InsufficientFunds("Can't bet more than player has")
