@@ -16,6 +16,12 @@ class PassBetType(BetType):
     def wins_postpoint(self, roll_outcome, dice, point):
         return dice.total == point
 
+    def loses_prepoint(self, roll_outcome, dice):
+        return dice.total in (2, 3, 12)
+
+    def loses_postpoint(self, roll_outcome, dice, point):
+        return dice.total == 7
+
 
 class PassBet(Bet):
     def __init__(self, amount, player_id):

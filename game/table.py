@@ -64,6 +64,15 @@ class Table:
     def seats(self):
         return self._seats
 
+    @property
+    def bets(self):
+        table_bets = []
+        for s in self.seats:
+            if s.empty:
+                continue
+            table_bets += s.player.active_bets[:]
+        return table_bets
+
     def player_for(self, player_id):
         return self._players.get(player_id)
 

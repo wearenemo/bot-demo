@@ -46,12 +46,18 @@ class BetType:
     def __repr__(self):
         return self.__str__()
 
-    # These two methods are meant to be primary customization
+    # These methods are meant to be primary customization
     # site for subclasses
     def wins_prepoint(self, roll_outcome, dice):
         raise NotImplementedError()
 
     def wins_postpoint(self, roll_outcome, dice, point):
+        raise NotImplementedError()
+
+    def loses_prepoint(self, roll_outcome, dice):
+        raise NotImplementedError()
+
+    def loses_postpoint(self, roll_outcome, dice, point):
         raise NotImplementedError()
 
     def payout_description(self):
@@ -62,6 +68,7 @@ class BetType:
     def payout_for(self, roll_outcome, dice, point) -> PayoutRatio:
         return self._payout_for(roll_outcome, dice, point)
 
+    # Internal method for implementing default behavior of payout_for
     def _payout_for(self, roll_outcome, dice, point) -> PayoutRatio:
 
         if point is None:
