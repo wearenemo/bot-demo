@@ -175,7 +175,9 @@ class AsciiTable:
         else:
             seats_str += f' (table is full)\n'
         if include_players:
-            ascii_table += T.bold(seats_str) + f'{T.mono(player_str)}'
+            ascii_table += T.bold(seats_str)
+            if player_str:
+                ascii_table += f'{T.mono(player_str)}'
         return ascii_table
 
     @classmethod

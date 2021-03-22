@@ -3,6 +3,7 @@ import asyncio
 from datetime import datetime as dt
 
 from game import bets
+from game.exceptions import AlreadyExists
 
 from utils import Emoji as E
 from utils import Text as T
@@ -79,7 +80,13 @@ class CollectBetsScene:
                         break
                 if not bet:
                     raise ValueError("No bet class found")
-
+                player = table.player_for(u_id)
+                if not player:
+                    player = table.create_player(u_id)
+                try:
+                    table.sit(player.id)
+                except AlreadyExists:
+                    pass
                 await self.handle_bet(bet, m)
             except asyncio.TimeoutError:
                 await bet_msg.add_reaction(E.HOURGLASS)

@@ -1,7 +1,7 @@
 import asyncio
 
 import discord
-from discord import TextChannel
+from discord import TextChannel, Member
 
 from discord.ext import commands
 from game.craps import CrapsManager
@@ -53,7 +53,6 @@ class CrapsBot(commands.Bot):
         """
         Starts a a game in channel
         """
-        print(self.craps_manager._tables)
         table = self.craps_manager.table_for(channel.guild.id)
         delegate = table.dealer.delegate
         if isinstance(delegate, BotDealerDelegate):
@@ -99,3 +98,13 @@ class CrapsBot(commands.Bot):
             )
         await asyncio.sleep(1.5)
         await table.dealer.play(player.id)
+
+    async def leave(self, member: Member, channel: TextChannel):
+        table = self.craps_manager.table_for(channel.guild.id)
+        delegate = table.dealer.delegate
+        player = table.player_for(member.id)
+        if not player:
+            return await channel.send(f'{member.name} not seated at a table!')
+        unseated = table.unseat(player.id)
+        summary = T.mono('  ' + str(unseated))
+        await channel.send(f'{member.name} left table\n{summary}')

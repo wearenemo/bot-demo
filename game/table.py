@@ -20,6 +20,9 @@ class _Seat:
             raise SeatsTaken("seat's taken")
         self._player = player
 
+    def unsit(self):
+        self._player = None
+
     @property
     def occupied(self):
         return bool(self.player)
@@ -94,6 +97,24 @@ class Table:
         if not seat:
             raise SeatsTaken("table's full")
         seat.sit(player)
+
+    def contains_player(self, player_id):
+        for s in self.seats:
+            if s.player and s.player.id == player_id:
+                return True
+        return False
+
+    def unseat(self, player_id):
+        if player_id not in self._players:
+            raise DoesNotExist("player does not exist")
+        for s in self.seats:
+            if s.player and s.player.id == player_id:
+                player = s.player
+                s.unsit()
+                # TODO - this might let you run away when
+                # the odds get bad for your bet
+                player.clear_bets()
+                return player
 
     def _available_seats(self):
         return [s for s in self._seats if s.empty]

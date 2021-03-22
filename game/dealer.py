@@ -43,6 +43,12 @@ class Dealer:
         while True:
             comeout = game.point is None
             dice = self._get_dice()
+            if not self.table.contains_player(shooter_id):
+                shooter = self.table.advance_button()
+                if not shooter:
+                    shooter_id = None
+                else:
+                    shooter_id = shooter.id
             rolled = await self.delegate.get_roll(
                 dice, shooter_id, self.table, comeout)
 

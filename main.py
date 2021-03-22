@@ -34,5 +34,13 @@ async def begin(ctx):
     """
     await bot.begin(ctx.channel)
 
+
+@bot.command()
+async def leave(ctx):
+    """
+    Leave the table.
+    """
+    await bot.leave(ctx.author, ctx.channel)
+
 # ask andy for the token
 bot.run(os.environ["CRAPS_TOKEN"])
