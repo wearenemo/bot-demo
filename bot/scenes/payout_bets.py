@@ -12,5 +12,4 @@ class PayoutBetsScene:
         outcome,
         channel
     ):
-        s = AsciiTable.show_dice(dice) + T.bold(outcome.value)
-        await channel.send(s)
+        await channel.send(T.bold(outcome.value))
