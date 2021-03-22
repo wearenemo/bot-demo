@@ -1,5 +1,9 @@
-from game.bets import Bet
+from game.bets import BetType, Bet
 
 
-class Come(Bet):
+class ComeBetType(BetType):
+    pass
+
+
+class ComeBet(Bet):
     pass

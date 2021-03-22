@@ -1,5 +1,9 @@
-from game.bets import Bet
+from game.bets import BetType, Bet
 
 
-class DontPass(Bet):
+class DontPassBetType(BetType):
+    pass
+
+
+class DontPassBet(Bet):
     pass

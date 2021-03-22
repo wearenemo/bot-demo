@@ -63,12 +63,8 @@ class CollectBetsScene:
                 bet_type = tokens[0]
                 amount = float(tokens[1])
                 u_id = m.author.id
-                if bet_type == 'come':
-                    bet = bets.Come(amount, u_id)
-                elif bet_type == 'pass':
-                    bet = bets.Pass(amount, u_id)
-                else:
-                    bet = bets.Bet(amount, u_id)
+                if bet_type == 'pass':
+                    bet = bets.PassBet(amount, u_id)
                 await self.handle_bet(bet, m)
             except asyncio.TimeoutError:
                 await bet_msg.add_reaction(E.HOURGLASS)

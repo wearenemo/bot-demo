@@ -1,7 +1,22 @@
 from dataclasses import dataclass
 
+from game.bets import BetType
+
 
 @dataclass
 class Bet:
+    bet_type: BetType
     amount: float
     player_id: int
+
+    @property
+    def name(self):
+        return self.bet_type.name
+
+    def __str__(self):
+        potential = self.bet_type.payout.payout_for(self.amount)
+        amt = f"{self.amount:.0f}"
+        return f"{self.name} [{amt}] - Pays ${potential:.0f} on ${amt}"
+
+    def __repr__(self):
+        return self.__str__()
