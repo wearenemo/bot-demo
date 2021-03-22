@@ -14,13 +14,13 @@ class PassBetType(BetType):
             postpoint_payable=True)
 
     def wins_prepoint(self, roll_outcome, dice):
-        return dice.total in (7, 11)
+        return dice.total in set([7, 11])
 
     def wins_postpoint(self, roll_outcome, dice, point):
         return dice.total == point
 
     def loses_prepoint(self, roll_outcome, dice):
-        return dice.total in (2, 3, 12)
+        return dice.total in set([(2, 3, 12)])
 
     def loses_postpoint(self, roll_outcome, dice, point):
         return dice.total == 7
