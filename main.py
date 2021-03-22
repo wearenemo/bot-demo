@@ -25,4 +25,4 @@ async def begin(ctx):
     await bot.begin(ctx.channel)
 
 # ask andy for the token
-bot.run(os.getenv("CRAPS_TOKEN"))
+bot.run(os.environ["CRAPS_TOKEN"])
