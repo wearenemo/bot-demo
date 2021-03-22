@@ -6,63 +6,46 @@ class AsciiTable:
         ==============
        |              |
        |              |
-     _ |              | _
+       |              |
        |    CRAPPY    |
        |    CASINO    |
-     1 |●             | _
+     1 |●             |
        |              |
        |--            |
-     ● |D |    8      | _
+     ● |D |    8      |
        |--            |
        |              |
-     _ |              | _
+       |              |
        |    CRAPPY    |
        |    CASINO    |
-     _ |              | _
+       |              |
        |              |
        |              |
         ==============
     """
-
-    top_bottom_row = [
-        '      ==============      ',
+    table = [
+        '      ===============      ',
+        '     | ♠   ♡   ♣   ♢ |     ',
+        '     |               |     ',
+        '   2 |               | 3   ',
+        '     |    CRAPPY♤    |     ',
+        '     |    ♡CASINO    |     ',
+        '   1 |               | 4   ',
+        '     |               |     ',
+        '     |--             |     ',
+        '   ● |D |            | 5   ',
+        '     |--             |     ',
+        '     |               |     ',
+        '   9 |               | 6   ',
+        '     |     ~~~~~     |     ',
+        '     |    | OFF |    |     ',
+        '   8 |     ~~~~~     | 7   ',
+        '     |               |     ',
+        '     | ♤   ♥   ♧   ♦ |     ',
+        '      ===============      '
     ]
-    casino_row = [
-        '     |    CRAPPY    |     ',
-        '     |    CASINO    |     '
-    ]
 
-    empty_chair_row = [
-        '   _ |              | _   ',
-    ]
-
-    dead_row = [
-        '     |              |     ',
-    ]
-
-    dealer_row = [
-        '     |--            |     ',
-        '   ● |D |   CC      | _   ',
-        '     |--            |     ',
-    ]
-
-    table = top_bottom_row + \
-            dead_row + \
-            dead_row + \
-            empty_chair_row + \
-            casino_row + \
-            empty_chair_row + \
-            dead_row + \
-            dealer_row + \
-            dead_row + \
-            empty_chair_row + \
-            casino_row + \
-            empty_chair_row + \
-            dead_row + \
-            dead_row + \
-            top_bottom_row
-
-    button = '●'
+    little_dice = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅']
 
     dice = {
         1: [
@@ -116,8 +99,8 @@ class AsciiTable:
         ]
     }
 
-    left_seats  = [0, 2, 5, 7]
-    right_seats = [1, 3, 4, 6, 8]
+    left_seats  = [1, 2, 8, 9]
+    right_seats = [3, 4, 5, 6, 7]
 
     @classmethod
     def empty(cls):
@@ -126,36 +109,43 @@ class AsciiTable:
     @classmethod
     def from_table(cls, table, include_players=True):
         ascii_table = AsciiTable.empty()
-        last_idx = 0
+        btn_idx = table.button_position + 1
+        b_idx = ascii_table.find(str(btn_idx))
+
+        # let's use the 3 die for now
+        button = cls.little_dice[2]
+
+        if btn_idx in cls.left_seats:
+            b_idx += 3
+        else:
+            b_idx -= 3
+        ascii_table = (
+            f'{ascii_table[:b_idx]}'
+            f'{button}'
+            f'{ascii_table[b_idx + 1:]}')
+
         player_str = ""
-        P = 1
         empty_seats = []
-        for i, s in enumerate(table.seats):
-            t_idx = ascii_table.find('_', last_idx + 1)
-            last_idx = t_idx
+        for s in table.seats:
+            i = s.index + 1
+            p = ' '
             if s.occupied:
-                b = ' '
-                if table.button_position == i:
-                    b = cls.button
-                if i in cls.left_seats:
-                    replacement = f'   {str(P)} |{b}'
-                else:
-                    replacement = f'{b}| {str(P)}   '
-                ascii_table = (
-                    f'{ascii_table[:t_idx - 3]}'
-                    f'{replacement}'
-                    f'{ascii_table[t_idx + 4:]}'
-                )
+                p = f'{i:.0f}'
                 player_str += (
-                    f'\n {P} -'
+                    f'\n {p} -'
                     f' {s.player.name} '
                     f'[${s.player.coins:.0f}]'
                 )
-                P += 1
             else:
-                empty_seats.append(i + 1)
+                empty_seats.append(i)
+
+            # replace the integers in the template string either
+            # with an empty space OR with the same number
+            ascii_table = ascii_table.replace(str(i), p)
+
         if table.point:
-            ascii_table = ascii_table.replace("CC", f'{table.point:2.0f}')
+            ascii_table = ascii_table.replace("OFF", f'{table.point:2.0f} ')
+
         seats_str = "\nSEATS"
         if empty_seats:
             seats_str += f' ({len(empty_seats)} empty) - place bet to sit\n'
@@ -171,5 +161,5 @@ class AsciiTable:
         d2 = cls.dice[dice.values[1]]
         s = ""
         for d1_row, d2_row in zip(d1, d2):
-            s += f'     {d1_row}  {d2_row}\n'
+            s += f'     {d1_row}   {d2_row}\n'
         return T.mono(s)
