@@ -3,11 +3,18 @@ from game.bets import PassBetType, DontPassBetType
 
 
 class Player:
+
+    MIN_NET_WORTH = 5
+
     def __init__(self, player_id: int, name: str, coins=500.0):
         self.id = player_id
         self.name = name
         self._coins = coins
         self._active_bets = []
+
+    @property
+    def net_worth(self):
+        return self.coins + self.coins_on_table
 
     @property
     def coins_on_table(self):
@@ -51,6 +58,7 @@ class Player:
         if coins > self._coins:
             raise InsufficientFunds("can't collect more than player has")
         self._coins -= coins
+
         return coins
 
     def place_bet(self, bet):
@@ -89,4 +97,7 @@ class Player:
                     found = True
                     del self._active_bets[i]
                     break
+        # MAKE SURE YOU ALWAYS GOT SOME MONEY
+        if self.net_worth < self.MIN_NET_WORTH:
+            self.pay(self.MIN_NET_WORTH - self.net_worth)
         print('my active bets are now:', self.active_bets)
