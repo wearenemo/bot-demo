@@ -46,6 +46,12 @@ class BetType:
     def __repr__(self):
         return self.__str__()
 
+    # override this for something with a weird name like
+    # "Don't Pass"
+    @property
+    def cmd_name(self):
+        return self.name.lower()
+
     # These methods are meant to be primary customization
     # site for subclasses
     def wins_prepoint(self, roll_outcome, dice):

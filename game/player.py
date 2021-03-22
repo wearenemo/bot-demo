@@ -1,5 +1,5 @@
 from game.exceptions import InsufficientFunds
-from game.bets import PassBetType
+from game.bets import PassBetType, DontPassBetType
 
 
 class Player:
@@ -30,6 +30,13 @@ class Player:
     def has_pass_bet(self):
         for b in self.active_bets:
             if b.name == PassBetType.name:
+                return True
+        return False
+
+    @property
+    def has_no_pass_bet(self):
+        for b in self.active_bets:
+            if b.name == DontPassBetType.name:
                 return True
         return False
 

@@ -1,5 +1,5 @@
 from game.dice import Dice
-from game.bets import Bet, PassBetType
+from game.bets import Bet, PassBetType, DontPassBetType
 from game.game import Game, RollOutcome
 
 from game.player_payout import PlayerPayout
@@ -12,7 +12,7 @@ class Dealer:
     Primary interface for bot to communicate intents regarding games.
     """
 
-    allowed_bet_types = [PassBetType()]
+    allowed_bet_types = [PassBetType(), DontPassBetType()]
 
     def __init__(self, table, delegate: DealerDelegate):
         self.table = table

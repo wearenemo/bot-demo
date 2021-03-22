@@ -20,7 +20,7 @@ class PassBetType(BetType):
         return dice.total == point
 
     def loses_prepoint(self, roll_outcome, dice):
-        return dice.total in set([(2, 3, 12)])
+        return dice.total in set([2, 3, 12])
 
     def loses_postpoint(self, roll_outcome, dice, point):
         return dice.total == 7

@@ -134,6 +134,7 @@ class AsciiTable:
             p = ' '
             if s.occupied:
                 p = f'{i:.0f}'
+                # add chips to pass line
                 if s.player.has_pass_bet:
                     p_idx = ascii_table.find(p)
                     if i in cls.left_seats:
@@ -144,7 +145,17 @@ class AsciiTable:
                         f'{ascii_table[:chip_idx]}'
                         f'{cls.CHIP}'
                         f'{ascii_table[chip_idx + 1:]}')
-
+                # add chips to don't pass line
+                if s.player.has_no_pass_bet:
+                    p_idx = ascii_table.find(p)
+                    if i in cls.left_seats:
+                        chip_idx = p_idx + 5
+                    else:
+                        chip_idx = p_idx - 5
+                    ascii_table = (
+                        f'{ascii_table[:chip_idx]}'
+                        f'{cls.CHIP}'
+                        f'{ascii_table[chip_idx + 1:]}')
                 coin_str = f'[${s.player.coins:.0f}'
                 coin_str += f'|${s.player.coins_on_table:.0f}]'
                 player_str += (f'\n {p} - {str(s.player)}')

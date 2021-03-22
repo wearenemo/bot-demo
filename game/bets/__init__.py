@@ -7,4 +7,4 @@ from game.bets.bet import Bet
 from game.bets.pass_bet import PassBet, PassBetType
 
 # from game.bets.come import ComeBet, ComeBetType
-# from game.bets.dont_pass import DontPassBet, DontPassBetType
+from game.bets.dont_pass import DontPassBet, DontPassBetType

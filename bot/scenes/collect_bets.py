@@ -11,7 +11,7 @@ from ascii_table import AsciiTable
 
 class CollectBetsScene:
 
-    allowed_bets = ['come', 'pass']
+    allowed_bets = ['pass', 'nopass']
     timeout = 10.0
 
     def __init__(self):
@@ -64,6 +64,8 @@ class CollectBetsScene:
                 u_id = m.author.id
                 if bet_type == 'pass':
                     bet = bets.PassBet(amount, u_id)
+                elif bet_type == 'nopass':
+                    bet = bets.DontPassBet(amount, u_id)
                 await self.handle_bet(bet, m)
             except asyncio.TimeoutError:
                 await bet_msg.add_reaction(E.HOURGLASS)
