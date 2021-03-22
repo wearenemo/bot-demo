@@ -2,7 +2,7 @@ import asyncio
 
 from datetime import datetime as dt
 
-from game.bet import Bet, ComeBet, PassBet
+from game.bets import Bet, ComeBet, PassBet
 
 from utils import Emoji as E
 from utils import Text as T

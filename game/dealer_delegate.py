@@ -1,4 +1,4 @@
-from game.bet import Bet
+from game.bets import Bet
 from game.dice import Dice
 
 

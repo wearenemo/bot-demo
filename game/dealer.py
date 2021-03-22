@@ -1,5 +1,5 @@
 from game.dice import Dice
-from game.bet import Bet
+from game.bets import Bet
 from game.game import Game, RollOutcome
 from game.exceptions import DealerException
 from game.dealer_delegate import DealerDelegate
