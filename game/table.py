@@ -86,6 +86,9 @@ class Table:
     def sit(self, player_id):
         if player_id not in self._players:
             raise DoesNotExist("player does not exist")
+        for s in self.seats:
+            if s.player and s.player.id == player_id:
+                raise AlreadyExists("player already seated")
         player = self._players.get(player_id)
         seat = random.choice(self._available_seats())
         if not seat:

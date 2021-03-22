@@ -70,7 +70,12 @@ class CrapsBot(commands.Bot):
                 table.sit(player.id)
                 playing.append(r.member)
             except AlreadyExists:
-                continue
+                player = table.player_for(r.member.id)
+                try:
+                    table.sit(player.id)
+                    playing.append(r.member)
+                except AlreadyExists:
+                    playing.append(r.member)
             except SeatsTaken:
                 await channel.send(
                     f"Sorry {r.member.mention}, the table is full.")
