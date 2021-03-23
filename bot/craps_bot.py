@@ -50,6 +50,28 @@ class CrapsBot(commands.Bot):
                 raise CrapsException("we don't play craps here")
         return table, delegate
 
+    async def try_sit(self, member, table, channel):
+        """
+        Try to sit a member at a table. Returns the
+        Player on success or None if it fails.
+        """
+        try:
+            player = table.create_player(
+                member.id, member.display_name)
+            table.sit(player.id)
+            return player
+        except AlreadyExists:
+            player = table.player_for(member.id)
+            try:
+                table.sit(player.id)
+                return player
+            except AlreadyExists:
+                return player
+        except SeatsTaken:
+            await channel.send(
+                f"Sorry {r.member.mention}, the table is full.")
+        return None
+
     async def on_ready(self):
         for g in self.guilds:
             for c in g.channels:
@@ -64,29 +86,21 @@ class CrapsBot(commands.Bot):
                     f'Channel {self.CRAPS_CHANNEL_NAME} does not exist')
         print("CrapsBot receiving crappy commands!")
 
-    async def begin(self, channel: TextChannel):
+    async def begin(self, member, channel: TextChannel):
         """
         Starts a a game in channel
         """
         table, delegate = await self.allowed_channel(channel)
-        responses = await BeginGameScene().show(channel, self)
         playing = []
+        player = await self.try_sit(member, table, channel)
+        if player:
+            playing.append(member)
+
+        responses = await BeginGameScene().show(channel, self)
         for r in responses:
-            try:
-                player = table.create_player(
-                    r.member.id, r.member.display_name)
-                table.sit(player.id)
+            player = await self.try_sit(r.member, table, channel)
+            if player:
                 playing.append(r.member)
-            except AlreadyExists:
-                player = table.player_for(r.member.id)
-                try:
-                    table.sit(player.id)
-                    playing.append(r.member)
-                except AlreadyExists:
-                    playing.append(r.member)
-            except SeatsTaken:
-                await channel.send(
-                    f"Sorry {r.member.mention}, the table is full.")
 
         shooter = table.advance_button()
         shooter_member = None
@@ -124,9 +138,8 @@ class CrapsBot(commands.Bot):
             return await channel.send(f'{member.name} not seated at a table!')
         s = f"{str(player)}"
         if player.active_bets:
-            s += "\n  "
             for ab in player.active_bets:
-                s += str(ab.cmd_name) + str(ab) + "\n  "
+                s += "\n  " + str(ab)
         else:
             s += "\n  " + "NO ACTIVE BETS"
         await channel.send(T.mono(s))
@@ -152,6 +165,9 @@ class CrapsBot(commands.Bot):
                 f'{recipient.display_name} not seated at a table!')
         coins = send_player.collect(amount)
         receive_player.pay(coins)
+        sass = ""
+        if sender.id == recipient.id:
+            sass = " I hope you're proud of yourself..."
         return await channel.send(
             f'{sender.display_name} gave ${amount} '
-            f'to {recipient.display_name}')
+            f'to {recipient.mention}.{sass}')

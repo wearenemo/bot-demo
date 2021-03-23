@@ -34,7 +34,7 @@ async def play(ctx):
     """
     Begin a game of craps.
     """
-    await bot.begin(ctx.channel)
+    await bot.begin(ctx.author, ctx.channel)
 
 
 @bot.command()
