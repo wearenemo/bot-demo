@@ -9,20 +9,20 @@ from bot.embeds.embed_option_delegate import EmbedOptionDelegate
 class BeginGameEmbed(GameEmbed):
     def __init__(self, option_delegate: EmbedOptionDelegate):
         super().__init__(
-            T.bold("Let's play craps!"),
-            "please!",
+            T.bold("What's the haps?!"),
+            "We're playing craps!",
             option_delegate=option_delegate)
         options = self.create_options()
         self.add_options(options)
 
     def create_options(self):
         option1 = EmbedOption(
-            "Signup",
-            "sign up to play the game",
+            "Haps?",
+            "Let's play Craps! 💰",
             E.THUMBS_UP)
 
         option2 = EmbedOption(
-            "Decline",
-            "stop losing so much money",
+            "FOMO",
+            "Oh no... 😭",
             E.THUMBS_DOWN)
         return [option1, option2]

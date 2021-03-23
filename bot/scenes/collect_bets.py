@@ -12,7 +12,7 @@ from ascii_table import AsciiTable
 
 class CollectBetsScene:
 
-    timeout = 20.0
+    timeout = 25.0
 
     def __init__(self):
         self.new_bets = []

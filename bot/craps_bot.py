@@ -91,6 +91,8 @@ class CrapsBot(commands.Bot):
         Starts a a game in channel
         """
         table, delegate = await self.allowed_channel(channel)
+        if table and table.is_playing:
+            return await channel.send('Already playing craps!')
         playing = []
         player = await self.try_sit(member, table, channel)
         if player:

@@ -64,6 +64,10 @@ class Table:
         return player_found
 
     @property
+    def is_playing(self):
+        return self.dealer.is_playing
+
+    @property
     def seats(self):
         return self._seats
 

@@ -7,7 +7,7 @@ from ascii_table import AsciiTable
 
 class GetRollScene:
 
-    timeout = 5.0
+    timeout = 6.0
 
     roll_duration = 2.0
 

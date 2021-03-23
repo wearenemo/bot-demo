@@ -2,6 +2,7 @@ import argparse
 import os
 
 from discord import Member
+from discord.ext.commands import check
 
 from bot.craps_bot import CrapsBot
 
@@ -14,6 +15,10 @@ args = parser.parse_args()
 bot = CrapsBot(command_prefix='$')
 if args.channel:
     bot.CRAPS_CHANNEL_NAME = args.channel
+
+
+async def is_craps_channel(ctx):
+    return ctx.channel and ctx.channel.name == bot.CRAPS_CHANNEL_NAME
 
 
 ###################
@@ -30,41 +35,46 @@ if args.channel:
 
 
 @bot.command(aliases=["throwdown", "begin"])
+@check(is_craps_channel)
 async def play(ctx):
     """
-    Begin a game of craps.
+    Begin a game of craps
     """
     await bot.begin(ctx.author, ctx.channel)
 
 
 @bot.command()
+@check(is_craps_channel)
 async def leave(ctx):
     """
-    Leave the table.
+    Leave the table
     """
     await bot.leave(ctx.author, ctx.channel)
 
 
 @bot.command()
+@check(is_craps_channel)
 async def me(ctx):
     """
-    Show current active bets.
+    Show active bets
     """
     await bot.me(ctx.author, ctx.channel)
 
 
 @bot.command()
+@check(is_craps_channel)
 async def tip(ctx, player: Member, amount: int):
     """
-    Tip another player.
+    Tip another player
     """
     await bot.tip(ctx.author, player, amount, ctx.channel)
 
 
 @bot.command()
+@check(is_craps_channel)
 async def clear(ctx, bet: str):
     """
-    Clear a bet from table.
+    Clear bet from table
 
     If you want to get rid of your place4 bet, do:
 
