@@ -45,8 +45,9 @@ class Dealer:
             await self.play_game(game, shooter_id)
             shooter = self.table.advance_button()
             if not shooter:
-                return
+                break
             shooter_id = shooter.id
+        await self.delegate.done_playing(self.table, shooter_id)
 
     async def play_game(self, game, shooter_id: int):
         """

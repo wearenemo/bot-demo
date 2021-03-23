@@ -33,6 +33,7 @@ class CrapsBot(commands.Bot):
         # server, they will be informed of these requirements.
         intents = discord.Intents.default()
         super().__init__(intents=intents, **kwargs)
+        self.TEST_MODE = True
 
         self.craps_manager = CrapsManager()
 
@@ -116,14 +117,14 @@ class CrapsBot(commands.Bot):
             raise CrapsException("No shooter!")
 
         player_str = 'Playing craps with: ' + ",".join([p.name for p in playing])
-
+        sleep = 2.0 if not self.TEST_MODE else 0.5
         async with channel.typing():
-            await asyncio.sleep(3.0)
+            await asyncio.sleep(sleep)
             await channel.send(
                 f'\n{T.bold(player_str)}\n'
                 f"{shooter_member.mention} has the dice. Let's hope they're hot!\n"
             )
-        await asyncio.sleep(1.5)
+        await asyncio.sleep(sleep)
         await table.dealer.play(player.id)
 
     async def leave(self, member: Member, channel: TextChannel):

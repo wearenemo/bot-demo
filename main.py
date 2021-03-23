@@ -9,6 +9,7 @@ from bot.craps_bot import CrapsBot
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--channel')
+parser.add_argument('--mode')
 args = parser.parse_args()
 
 
@@ -83,5 +84,21 @@ async def clear(ctx, bet: str):
     await bot.clear_bet(ctx.author, bet, ctx.channel)
 
 
+# only disable TEST_MODE if run with:
+#
+# python main.py --mode deploy
+TEST_MODE = True
+if args.mode:
+    print("bot run mode:", args.mode)
+    if args.mode.lower().strip() == 'deploy':
+        TEST_MODE = False
+
 # ask andy for the token
-bot.run(os.environ["CRAPS_TOKEN"])
+if TEST_MODE:
+    print("RUNNING IN TEST MODE")
+    token = os.environ["TEST_CRAPS_TOKEN"]
+else:
+    print("RUNNING IN DEPLOY MODE")
+    token = os.environ["CRAPS_TOKEN"]
+bot.TEST_MODE = TEST_MODE
+bot.run(token)

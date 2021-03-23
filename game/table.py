@@ -129,7 +129,13 @@ class Table:
 
     @property
     def seats_available(self):
-        return self._seats.count(lambda s: s.empty)
+        N = 0
+        for s in self._seats:
+            if s.empty:
+                N += 1
+        print("SEATS AVAILABLE", N)
+        print("NUM SEATS", self.num_seats)
+        return N
 
     @property
     def full(self):

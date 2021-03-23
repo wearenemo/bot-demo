@@ -13,8 +13,6 @@ import random
 
 class CollectBetsScene:
 
-    timeout = 25.0
-
     wait_messages = [
         'Wait til betting is over!',
         'Patience. We are betting.',
@@ -29,6 +27,7 @@ class CollectBetsScene:
 
     def __init__(self):
         self.new_bets = []
+        self.timeout = 25.0
 
     async def handle_bet(self, bet, msg, player, dealer):
         if bet.amount > player.coins:
@@ -39,6 +38,9 @@ class CollectBetsScene:
             await msg.add_reaction(E.MONEY_BAG)
 
     async def show(self, bot, table, allowed_bet_types, display_channel, dealer):
+
+        if bot.TEST_MODE:
+            self.timeout = 2.5
 
         allowed_bets = [bt.cmd_name for bt in allowed_bet_types]
 

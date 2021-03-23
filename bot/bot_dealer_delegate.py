@@ -9,6 +9,7 @@ from bot.scenes.get_roll import GetRollScene
 from bot.scenes.collect_bets import CollectBetsScene
 from bot.scenes.payout_bets import PayoutBetsScene
 from bot.scenes.game_over import GameOverScene
+from bot.scenes.done_playing import DonePlayingScene
 
 
 class BotDealerDelegate(DealerDelegate):
@@ -27,9 +28,10 @@ class BotDealerDelegate(DealerDelegate):
             self.bot, table, allowed, self.display_channel, table.dealer)
 
     async def notify_payouts(self, payouts, table, dice, roll_outcome):
+        timeout = 2.0 if not self.bot.TEST_MODE else 0.5
         await PayoutBetsScene().show(
             self.bot, payouts, table, dice, roll_outcome, self.display_channel)
-        await asyncio.sleep(1.0)
+        await asyncio.sleep(timeout)
 
     async def get_roll(self, dice, shooter_id, table, first_roll: bool):
         return await GetRollScene().show(
@@ -41,16 +43,23 @@ class BotDealerDelegate(DealerDelegate):
             self.display_channel)
 
     async def game_over(self,
-                        game_outcome,
+                        roll_outcome,
                         table,
                         payouts,
                         dice,
                         next_shooter_id):
-        return await GameOverScene.show(
+        return await GameOverScene().show(
             self.bot,
-            game_outcome,
+            roll_outcome,
             table,
             payouts,
             dice,
             next_shooter_id,
+            self.display_channel)
+
+    async def done_playing(self, table, last_shooter_id):
+        return await DonePlayingScene().show(
+            self.bot,
+            table,
+            last_shooter_id,
             self.display_channel)

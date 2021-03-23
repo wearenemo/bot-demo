@@ -8,10 +8,6 @@ from ascii_table import AsciiTable
 
 class GetRollScene:
 
-    timeout = 6.0
-
-    roll_duration = 2.0
-
     async def show(
         self,
         bot,
@@ -21,6 +17,10 @@ class GetRollScene:
         first_roll,
         display_channel
     ):
+        # set pace based on test mode
+        self.timeout = 6.0 if not bot.TEST_MODE else 2.0
+        self.roll_duration = 2.0 if not bot.TEST_MODE else 0.0
+        self.nap = 0.3 if not bot.TEST_MODE else 0.1
         if shooter_id:
             user = await bot.fetch_user(shooter_id)
             bets_in = T.bold("Bets are IN!")
@@ -49,16 +49,16 @@ class GetRollScene:
         except asyncio.TimeoutError:
             async with display_channel.typing():
                 await waiting.add_reaction(E.HOURGLASS)
-                await asyncio.sleep(0.3)
+                await asyncio.sleep(self.nap)
                 new_content = waiting.content + " nevermind, I can do it for you."
                 await waiting.edit(content=new_content)
-            await asyncio.sleep(1.0)
+            await asyncio.sleep(self.nap)
         finally:
             return await self.roll(dice, display_channel)
 
     async def roll(self, dice, display_channel):
         start = dt.utcnow()
-        now = start
+        now = dt.utcnow()
         new_dice = Dice(2)
         new_dice.roll()
         roll_m = await display_channel.send(AsciiTable.show_dice(new_dice))

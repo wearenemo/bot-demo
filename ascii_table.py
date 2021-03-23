@@ -113,15 +113,20 @@ class AsciiTable:
     def from_table(cls, table, include_players=True):
         ascii_table = AsciiTable.empty()
         btn_idx = table.button_position + 1
-        b_idx = ascii_table.find(str(btn_idx))
+        if not table.empty:
+            b_idx = ascii_table.find(str(btn_idx))
+            if btn_idx in cls.left_seats:
+                b_idx += 1
+            else:
+                b_idx -= 1
+        else:
+            # dealer gets button
+            b_idx = ascii_table.find('●')
+            b_idx += 1
 
         # let's use the 3 die for now
         button = cls.little_dice[2]
 
-        if btn_idx in cls.left_seats:
-            b_idx += 1
-        else:
-            b_idx -= 1
         ascii_table = (
             f'{ascii_table[:b_idx]}'
             f'{button}'
