@@ -54,3 +54,9 @@ class Emoji:
     ENVELOPE     = '✉️'
     PLAY         = '▶️'
     DIE          = '🎲'
+    SLOT_MACHINE = '🎰'
+    MONEY_BAG    = '💰'
+    MONEY_WINGS  = '💸'
+    SAD          = '😭'
+    SEVEN        = '7️⃣'
+

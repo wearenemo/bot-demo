@@ -36,6 +36,20 @@ class CrapsBot(commands.Bot):
 
         self.craps_manager = CrapsManager()
 
+    async def allowed_channel(self, channel):
+        """
+        preprocessing that we probably want to do on every cmd
+        """
+        table = self.craps_manager.table_for(channel.guild.id)
+        delegate = table.dealer.delegate
+        if isinstance(delegate, BotDealerDelegate):
+            if delegate.display_channel != channel:
+                await channel.send(
+                    f"This isn't where we play craps! Try "
+                    f"#{self.CRAPS_CHANNEL_NAME}")
+                raise CrapsException("we don't play craps here")
+        return table, delegate
+
     async def on_ready(self):
         for g in self.guilds:
             for c in g.channels:
@@ -46,20 +60,15 @@ class CrapsBot(commands.Bot):
                         self.SEATS_PER_TABLE, g.id, delegate)
                     break
             else:
-                raise Exception(f'Channel {self.CRAPS_CHANNEL_NAME} does not exist')
+                raise Exception(
+                    f'Channel {self.CRAPS_CHANNEL_NAME} does not exist')
         print("CrapsBot receiving crappy commands!")
 
     async def begin(self, channel: TextChannel):
         """
         Starts a a game in channel
         """
-        table = self.craps_manager.table_for(channel.guild.id)
-        delegate = table.dealer.delegate
-        if isinstance(delegate, BotDealerDelegate):
-            if delegate.display_channel != channel:
-                return await channel.send(
-                    f"This isn't where we play craps! Try "
-                    f"#{self.CRAPS_CHANNEL_NAME}")
+        table, delegate = await self.allowed_channel(channel)
         responses = await BeginGameScene().show(channel, self)
         playing = []
         for r in responses:
@@ -100,11 +109,49 @@ class CrapsBot(commands.Bot):
         await table.dealer.play(player.id)
 
     async def leave(self, member: Member, channel: TextChannel):
-        table = self.craps_manager.table_for(channel.guild.id)
-        delegate = table.dealer.delegate
+        table, delegate = await self.allowed_channel(channel)
         player = table.player_for(member.id)
         if not player:
             return await channel.send(f'{member.name} not seated at a table!')
         unseated = table.unseat(player.id)
         summary = T.mono('  ' + str(unseated))
         await channel.send(f'{member.name} left table\n{summary}')
+
+    async def me(self, member: Member, channel: TextChannel):
+        table, delegate = await self.allowed_channel(channel)
+        player = table.player_for(member.id)
+        if not player:
+            return await channel.send(f'{member.name} not seated at a table!')
+        s = f"{str(player)}"
+        if player.active_bets:
+            s += "\n  "
+            for ab in player.active_bets:
+                s += str(ab.cmd_name) + str(ab) + "\n  "
+        else:
+            s += "\n  " + "NO ACTIVE BETS"
+        await channel.send(T.mono(s))
+
+    async def tip(
+        self,
+        sender: Member,
+        recipient: Member,
+        amount: int,
+        channel: TextChannel
+    ):
+        table, delegate = await self.allowed_channel(channel)
+        send_player = table.player_for(sender.id)
+        if not send_player:
+            return await channel.send(
+                f'{sender.display_name} not seated at a table!')
+        if amount > send_player.coins:
+            return await channel.send(
+                f'Sorry {sender.name}, you are not rich enough to do that!')
+        receive_player = table.player_for(recipient.id)
+        if not receive_player:
+            return await channel.send(
+                f'{recipient.display_name} not seated at a table!')
+        coins = send_player.collect(amount)
+        receive_player.pay(coins)
+        return await channel.send(
+            f'{sender.display_name} gave ${amount} '
+            f'to {recipient.display_name}')

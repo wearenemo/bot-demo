@@ -17,9 +17,12 @@ class CollectBetsScene:
     def __init__(self):
         self.new_bets = []
 
-    async def handle_bet(self, bet, msg):
-        self.new_bets.append(bet)
-        await msg.add_reaction(E.CHECKMARK)
+    async def handle_bet(self, bet, msg, player):
+        if bet.amount > player.coins:
+            await msg.add_reaction(E.RED_X)
+        else:
+            self.new_bets.append(bet)
+            await msg.add_reaction(E.MONEY_BAG)
 
     async def show(self, bot, table, allowed_bet_types, display_channel):
 
@@ -87,7 +90,7 @@ class CollectBetsScene:
                     table.sit(player.id)
                 except AlreadyExists:
                     pass
-                await self.handle_bet(bet, m)
+                await self.handle_bet(bet, m, player)
             except asyncio.TimeoutError:
                 await bet_msg.add_reaction(E.HOURGLASS)
                 break
