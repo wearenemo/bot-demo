@@ -24,7 +24,7 @@ class AsciiTable:
         ==============
     """
 
-    CHIP = '●'
+    CHIP = '$'
 
     table = [
         '     ┏━━━━━━━━━━━━━━━┓     ',
