@@ -66,9 +66,9 @@ async def clear(ctx, bet: str):
     """
     Clear a bet from table.
 
-    If you want to get rid of your pass4 bet, do:
+    If you want to get rid of your place4 bet, do:
 
-      $clear pass4
+      $clear place4
     """
     await bot.clear_bet(ctx.author, bet, ctx.channel)
 
