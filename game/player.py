@@ -73,7 +73,6 @@ class Player:
                     bet.consolidate_into(other)
                     return wagered
             self._active_bets.append(bet)
-            print(f'now i have {self.coins} coins')
             return wagered
         except InsufficientFunds:
             print('error!')
@@ -105,7 +104,6 @@ class Player:
         Use this to clear losing_bets.
         """
         found = True
-        print('trying to destroy bets with name', bet_type_name)
         while found:
             found = False
             for i, b in enumerate(self._active_bets):
@@ -116,4 +114,3 @@ class Player:
         # MAKE SURE YOU ALWAYS GOT SOME MONEY
         if self.net_worth < self.MIN_NET_WORTH:
             self.pay(self.MIN_NET_WORTH - self.net_worth)
-        print('my active bets are now:', self.active_bets)

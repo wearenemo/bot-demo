@@ -9,7 +9,8 @@ class DealerDelegate:
     work with Dealers
     """
     async def next_shooter(
-        self
+        self,
+        table
     ) -> int:
         raise NotImplementedError()
 
@@ -32,6 +33,7 @@ class DealerDelegate:
     async def get_roll(
         self,
         dice: Dice,
+        shooter_id,
         table,
         first_roll: bool
     ) -> Dice:

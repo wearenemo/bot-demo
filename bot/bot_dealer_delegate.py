@@ -13,27 +13,62 @@ from bot.scenes.done_playing import DonePlayingScene
 
 
 class BotDealerDelegate(DealerDelegate):
-    def __init__(self, bot: Bot, display_channel: TextChannel):
+    def __init__(
+        self,
+        bot: Bot,
+        display_channel: TextChannel
+    ):
+
         self.bot = bot
         self.display_channel = display_channel
 
-    async def next_shooter(self, table) -> int:
+    async def next_shooter(
+        self,
+        table
+    ) -> int:
+
         next_player = table.advance_button()
         if not next_player:
             return None
         return next_player.id
 
-    async def collect_bets(self, table, allowed):
+    async def collect_bets(
+        self,
+        table,
+        allowed
+    ):
+
         return await CollectBetsScene().show(
-            self.bot, table, allowed, self.display_channel, table.dealer)
+            self.bot,
+            table,
+            allowed,
+            self.display_channel,
+            table.dealer)
 
-    async def notify_payouts(self, payouts, table, dice, roll_outcome):
-        timeout = 2.0 if not self.bot.TEST_MODE else 0.5
+    async def notify_payouts(
+        self,
+        payouts,
+        table,
+        dice,
+        roll_outcome
+    ):
+
         await PayoutBetsScene().show(
-            self.bot, payouts, table, dice, roll_outcome, self.display_channel)
-        await asyncio.sleep(timeout)
+            self.bot,
+            payouts,
+            table,
+            dice,
+            roll_outcome,
+            self.display_channel)
 
-    async def get_roll(self, dice, shooter_id, table, first_roll: bool):
+    async def get_roll(
+        self,
+        dice,
+        shooter_id,
+        table,
+        first_roll: bool
+    ):
+
         return await GetRollScene().show(
             self.bot,
             dice,
@@ -42,12 +77,15 @@ class BotDealerDelegate(DealerDelegate):
             first_roll,
             self.display_channel)
 
-    async def game_over(self,
-                        roll_outcome,
-                        table,
-                        payouts,
-                        dice,
-                        next_shooter_id):
+    async def game_over(
+        self,
+        roll_outcome,
+        table,
+        payouts,
+        dice,
+        next_shooter_id
+    ):
+
         return await GameOverScene().show(
             self.bot,
             roll_outcome,
@@ -57,7 +95,12 @@ class BotDealerDelegate(DealerDelegate):
             next_shooter_id,
             self.display_channel)
 
-    async def done_playing(self, table, last_shooter_id):
+    async def done_playing(
+        self,
+        table,
+        last_shooter_id
+    ):
+
         return await DonePlayingScene().show(
             self.bot,
             table,

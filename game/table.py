@@ -133,8 +133,6 @@ class Table:
         for s in self._seats:
             if s.empty:
                 N += 1
-        print("SEATS AVAILABLE", N)
-        print("NUM SEATS", self.num_seats)
         return N
 
     @property
