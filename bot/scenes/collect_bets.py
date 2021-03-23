@@ -41,6 +41,9 @@ class CollectBetsScene:
 
         if bot.TEST_MODE:
             self.timeout = 2.5
+        else:
+            if table.empty:
+                self.timeout = 10.0
 
         allowed_bets = [bt.cmd_name for bt in allowed_bet_types]
 
