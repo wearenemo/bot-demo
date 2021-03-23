@@ -61,5 +61,17 @@ async def tip(ctx, player: Member, amount: int):
     await bot.tip(ctx.author, player, amount, ctx.channel)
 
 
+@bot.command()
+async def clear(ctx, bet: str):
+    """
+    Clear a bet from table.
+
+    If you want to get rid of your pass4 bet, do:
+
+      $clear pass4
+    """
+    await bot.clear_bet(ctx.author, bet, ctx.channel)
+
+
 # ask andy for the token
 bot.run(os.environ["CRAPS_TOKEN"])

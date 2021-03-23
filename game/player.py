@@ -68,6 +68,10 @@ class Player:
         """
         try:
             wagered = self.collect(bet.amount)
+            for other in self._active_bets:
+                if bet.can_consolidate_with(other):
+                    bet.consolidate_into(other)
+                    return wagered
             self._active_bets.append(bet)
             print(f'now i have {self.coins} coins')
             return wagered
@@ -82,6 +86,18 @@ class Player:
         for b in self._active_bets:
             self.pay(b.amount)
         self._active_bets.clear()
+
+    def clear_bet(self, bet_cmd_name):
+        del_idx = None
+        for i, b in enumerate(self._active_bets):
+            if b.cmd_name == bet_cmd_name:
+                del_idx = i
+                to_delete = b
+        if del_idx is not None:
+            self._active_bets.pop(del_idx)
+            self.pay(to_delete.amount)
+            return to_delete
+        return None
 
     def destroy_bets(self, bet_type_name):
         """

@@ -171,3 +171,19 @@ class CrapsBot(commands.Bot):
         return await channel.send(
             f'{sender.display_name} gave ${amount} '
             f'to {recipient.mention}.{sass}')
+
+    async def clear_bet(self, member, cmd_name, channel):
+        table, delegate = await self.allowed_channel(channel)
+        player = table.player_for(member.id)
+        if not player:
+            return await channel.send(
+                f'{member.display_name} not seated at a table!')
+        cleared = player.clear_bet(cmd_name.lower().strip())
+        if not cleared:
+            return await channel.send(
+                f'{member.display_name} has no `{cmd_name}` bets!'
+            )
+        else:
+            return await channel.send(
+                f'Cleared bet {cleared}.\nYour ${cleared.amount:.0f} have been returned.'
+            )

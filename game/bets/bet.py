@@ -17,6 +17,13 @@ class Bet:
     def cmd_name(self):
         return self.bet_type.cmd_name
 
+    def can_consolidate_with(self, other):
+        return other.cmd_name == self.cmd_name
+
+    def consolidate_into(self, other):
+        if self.can_consolidate_with(other):
+            other.amount += self.amount
+
     def __str__(self):
         potential = self.bet_type.payout.payout_for(self.amount)
         amt = f"{self.amount:.0f}"
