@@ -30,4 +30,5 @@ class PayoutBetsScene:
             s += '\n    '.join([str(po) for po in payouts])
         if s:
             s = T.mono("PAYOUTS / LOSSES" + s)
-        await channel.send(T.bold(outcome.value) + s)
+        outcome = T.bold(f"ROLLED {dice.total}: ") + outcome.value
+        await channel.send(outcome + s)

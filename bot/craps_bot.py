@@ -41,6 +41,8 @@ class CrapsBot(commands.Bot):
         preprocessing that we probably want to do on every cmd
         """
         table = self.craps_manager.table_for(channel.guild.id)
+        if not table:
+            return None, None
         delegate = table.dealer.delegate
         if isinstance(delegate, BotDealerDelegate):
             if delegate.display_channel != channel:

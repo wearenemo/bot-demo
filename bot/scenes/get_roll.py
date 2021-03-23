@@ -1,5 +1,6 @@
 import asyncio
 from utils import Emoji as E
+from utils import Text as T
 from datetime import datetime as dt
 from game.dice import Dice
 from ascii_table import AsciiTable
@@ -22,8 +23,12 @@ class GetRollScene:
     ):
         if shooter_id:
             user = await bot.fetch_user(shooter_id)
+            bets_in = T.bold("Bets are IN!")
+            wait_str = T.block_quote(
+                f"Waiting {self.timeout:.0f} seconds for "
+                f"{user.display_name} to `roll`...")
             waiting = await display_channel.send(
-                f'Waiting {self.timeout:.0f} seconds for {user.mention} to `roll`...'
+                f'{bets_in}\n{wait_str}'
             )
         else:
             await display_channel.send(

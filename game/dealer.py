@@ -41,20 +41,20 @@ class Dealer:
         Keep playing as long as the table has a player
         """
         while not self.table.empty:
-            self.game = Game()
-            await self.play_game(self.game, shooter_id)
+            game = Game()
+            await self.play_game(game, shooter_id)
             shooter = self.table.advance_button()
             if not shooter:
                 return
             shooter_id = shooter.id
-            self.game = None
 
     async def play_game(self, game, shooter_id: int):
         """
         Play for one shooter's turn
         """
+        self.game = game
         bets = await self.delegate.collect_bets(self.table, self._allowed_bet_types())
-        self._verify_and_place_bets(bets)
+        # self._verify_and_place_bets(bets)
         while True:
             comeout = game.point is None
             dice = self._get_dice()
@@ -83,10 +83,11 @@ class Dealer:
                 break
 
             bets = await self.delegate.collect_bets(self.table, self._allowed_bet_types())
-            self._verify_and_place_bets(bets)
+            # self._verify_and_place_bets(bets)
 
         await self.delegate.game_over(
             roll_outcome, self.table, payouts, rolled, shooter_id)
+        self.game = None
 
     #################
     # Private methods
