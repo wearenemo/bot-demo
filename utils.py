@@ -62,4 +62,5 @@ class Emoji:
     TEN          = '🔟'
     REFRESH      = '🔄'
     CLOCK        = '🕙'
+    BLOW         = '🌬️'
 

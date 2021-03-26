@@ -44,14 +44,23 @@ class GetRollScene:
 
         def check(m):
             if m.content.strip().lower() != 'roll':
+                if m.content.strip().lower() == 'blow':
+                    return True
+                if m.content.startswith(E.BLOW):
+                    return True
                 return False
             if m.author.id != shooter_id:
                 return False
             return True
 
         try:
-            await bot.wait_for(
+            resp = await bot.wait_for(
                 'message', check=check, timeout=self.timeout)
+            content = resp.content.strip().lower()
+            if content == 'blow' or content.startswith(E.BLOW):
+                await resp.add_reaction(E.BLOW)
+                await resp.add_reaction(E.DIE)
+
         except asyncio.TimeoutError:
             async with display_channel.typing():
                 await waiting.add_reaction(E.HOURGLASS)
