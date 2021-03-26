@@ -61,11 +61,11 @@ class CollectBetsScene:
 
     async def show(self, bot, table, allowed_bet_types, display_channel, dealer):
 
-        # if bot.TEST_MODE:
-        #     self.timeout = 2.5
-        # else:
-        #     if table.empty:
-        #         self.timeout = 5.0
+        if bot.TEST_MODE:
+            self.timeout = 2.5
+        else:
+            if table.empty:
+                self.timeout = 5.0
 
         allowed_bets = [bt.cmd_name for bt in allowed_bet_types]
 

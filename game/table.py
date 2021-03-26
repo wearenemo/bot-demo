@@ -39,7 +39,7 @@ class _Seat:
 
 class Table:
 
-    INACTIVE_THRESH = 5.0 * 60  # 5 mins
+    INACTIVE_THRESH = 1.0 * 60  # 1 minute
 
     def __init__(self,
                  num_seats: int,
@@ -152,6 +152,16 @@ class Table:
 
     def _available_seats(self):
         return [s for s in self._seats if s.empty]
+
+    def mark_active_bets(self):
+        now = dt.utcnow()
+        for s in self.seats:
+            player = s.player
+            if not player:
+                continue
+            if not player.active_bets:
+                continue
+            player._last_bet_at = now
 
     @property
     def num_seats(self):

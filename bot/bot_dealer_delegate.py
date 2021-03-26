@@ -129,3 +129,4 @@ class BotDealerDelegate(DealerDelegate):
             f'Clearing players due to inactivity. Place '
             f'a bet at any time to rejoin. Cleared: \n{cleared_str}'
         )
+        await asyncio.sleep(1.5)

@@ -93,6 +93,7 @@ class Dealer:
             payouts = self._payout_bets(
                 self.table.bets, rolled, roll_outcome, self.table.point)
             self.table.point = game.point
+            self.table.mark_active_bets()
 
             await self.delegate.notify_payouts(
                 payouts, self.table, rolled, roll_outcome)
