@@ -148,6 +148,9 @@ class Dealer:
                 # TODO notify delegate
                 print("CAN'T PLACE BET! Player doesnt have the money")
                 continue
+            if amount <= 0.0:
+                print("Can't place bet! Amounts must be positive")
+                continue
             player.place_bet(b)
 
     def _get_dice(self):

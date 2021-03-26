@@ -59,4 +59,7 @@ class Emoji:
     MONEY_WINGS  = '💸'
     SAD          = '😭'
     SEVEN        = '7️⃣'
+    TEN          = '🔟'
+    REFRESH      = '🔄'
+    CLOCK        = '🕙'
 

@@ -27,24 +27,31 @@ class CollectBetsScene:
 
     def __init__(self):
         self.new_bets = []
-        self.timeout = 25.0
+        self.timeout = 12.0
+        self.time_increase_per_bet = 10.0
 
     async def handle_bet(
-        self, bet, msg, player, dealer, bet_msg, table, allowed_bets):
-        if bet.amount > player.coins:
+        self, bet, msg, player, dealer, bet_msg, table, allowed_bets, remaining):
+        if bet.amount > player.coins or bet.amount < 1.0:
             await msg.add_reaction(E.RED_X)
         else:
             self.new_bets.append(bet)
             dealer._verify_and_place_bets([bet])
             await bet_msg.edit(
-                content=self.make_table(table, allowed_bets))
+                content=self.make_table(table, allowed_bets, remaining))
             await msg.add_reaction(E.MONEY_BAG)
+            await msg.add_reaction(E.REFRESH)
+            await msg.add_reaction(E.CLOCK)
 
-    def make_table(self, table, allowed_bets):
+    def make_table(self, table, allowed_bets, time_remaining):
         ascii_table = AsciiTable.from_table(table)
 
         place_bets = T.bold("Place your bets!")
-        place_bets += f" You have {self.timeout:.0f} seconds."
+        place_bets += f" You have {time_remaining:.0f} "
+        if time_remaining < self.timeout:
+            place_bets += "more seconds to bet..."
+        else:
+            place_bets += "seconds."
 
         valid_bets = ", ".join([T.inline_mono(b) for b in allowed_bets])
         valid_bets = T.block_quote("Valid bets are: " + valid_bets)
@@ -54,11 +61,11 @@ class CollectBetsScene:
 
     async def show(self, bot, table, allowed_bet_types, display_channel, dealer):
 
-        if bot.TEST_MODE:
-            self.timeout = 2.5
-        else:
-            if table.empty:
-                self.timeout = 10.0
+        # if bot.TEST_MODE:
+        #     self.timeout = 2.5
+        # else:
+        #     if table.empty:
+        #         self.timeout = 5.0
 
         allowed_bets = [bt.cmd_name for bt in allowed_bet_types]
 
@@ -89,13 +96,15 @@ class CollectBetsScene:
             return False
 
         bet_msg = await display_channel.send(
-            self.make_table(table, allowed_bets))
+            self.make_table(table, allowed_bets, self.timeout))
 
         timeout = self.timeout
         start = dt.utcnow()
         while True:
             try:
                 left = timeout - (dt.utcnow() - start).total_seconds()
+                left = max(left, self.time_increase_per_bet)
+                left = min(left, self.timeout)
                 if left < 0.0:
                     raise asyncio.TimeoutError()
                 m = await bot.wait_for('message', check=check, timeout=left)
@@ -118,8 +127,11 @@ class CollectBetsScene:
                     table.sit(player.id)
                 except AlreadyExists:
                     pass
+                left = timeout - (dt.utcnow() - start).total_seconds()
+                left = max(left, self.time_increase_per_bet)
+                left = min(left, self.timeout)
                 await self.handle_bet(
-                    bet, m, player, dealer, bet_msg, table, allowed_bets)
+                    bet, m, player, dealer, bet_msg, table, allowed_bets, left)
             except asyncio.TimeoutError:
                 await bet_msg.add_reaction(E.HOURGLASS)
                 break

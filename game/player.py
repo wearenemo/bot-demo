@@ -1,4 +1,4 @@
-from game.exceptions import InsufficientFunds
+from game.exceptions import InsufficientFunds, InvalidAmount
 from game.bets import PassBetType, DontPassBetType
 
 from datetime import datetime as dt
@@ -62,8 +62,8 @@ class Player:
         self._coins += coins
 
     def collect(self, coins: float):
-        if coins < 0.0:
-            raise ValueError("Can't collect negative money")
+        if coins <= 0.0:
+            raise InvalidAmount("Dollar amounts must be positive")
         if coins > self._coins:
             raise InsufficientFunds("can't collect more than player has")
         self._coins -= coins

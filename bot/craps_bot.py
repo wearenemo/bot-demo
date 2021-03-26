@@ -103,6 +103,8 @@ class CrapsBot(commands.Bot):
 
         responses = await BeginGameScene().show(channel, self)
         for r in responses:
+            if r.member in playing:
+                continue
             player = await self.try_sit(r.member, table, channel)
             if player:
                 playing.append(r.member)
@@ -116,7 +118,7 @@ class CrapsBot(commands.Bot):
         if not shooter_member:
             raise CrapsException("No shooter!")
 
-        player_str = 'Playing craps with: ' + ",".join([p.name for p in playing])
+        player_str = 'Playing craps with: ' + ", ".join([p.name for p in playing])
         sleep = 2.0 if not self.TEST_MODE else 0.5
         async with channel.typing():
             await asyncio.sleep(sleep)
