@@ -5,7 +5,7 @@ from game.bets import Place8BetType, Place9BetType, Place10BetType
 from game.game import Game, RollOutcome
 
 from game.player_payout import PlayerPayout
-from game.exceptions import DealerException
+from game.exceptions import DealerException, CrapsException
 from game.dealer_delegate import DealerDelegate
 
 
@@ -41,22 +41,33 @@ class Dealer:
         Keep playing as long as the table has a player
         """
         while not self.table.empty:
-            game = Game()
-            await self.play_game(game, shooter_id)
-            shooter = self.table.advance_button()
-            if not shooter:
-                break
-            shooter_id = shooter.id
-        await self.delegate.done_playing(self.table, shooter_id)
+            try:
+                self.game = Game()
+                await self.play_game(shooter_id)
+                shooter = self.table.advance_button()
+                if not shooter:
+                    break
+                shooter_id = shooter.id
+                await self.delegate.done_playing(self.table, shooter_id)
+                self.game = None
+            except Exception as exc:
+                self.game = None
+                self.table.clear()
+                await self.delegate.report_exception(exc)
 
-    async def play_game(self, game, shooter_id: int):
+    async def play_game(self, shooter_id: int):
         """
         Play for one shooter's turn
         """
-        self.game = game
-        bets = await self.delegate.collect_bets(self.table, self._allowed_bet_types())
-        # self._verify_and_place_bets(bets)
+        if not self.game:
+            raise CrapsException("No game to play!")
+
+        await self.delegate.collect_bets(self.table, self._allowed_bet_types())
+
         while True:
+            game = self.game
+            if game is None:
+                raise CrapsException("no game to play. Can't get roll")
             comeout = game.point is None
             dice = self._get_dice()
             if not self.table.contains_player(shooter_id):
@@ -70,7 +81,9 @@ class Dealer:
 
             if rolled is not dice:
                 raise DealerException("cheater")
-
+            game = self.game
+            if game is None:
+                raise CrapsException("no game to play. Can't payout bets.")
             roll_outcome = game.update(rolled)
             payouts = self._payout_bets(
                 self.table.bets, rolled, roll_outcome, self.table.point)
@@ -83,8 +96,8 @@ class Dealer:
                 shooter_id = await self.delegate.next_shooter(self.table)
                 break
 
-            bets = await self.delegate.collect_bets(self.table, self._allowed_bet_types())
-            # self._verify_and_place_bets(bets)
+            await self.delegate.collect_bets(
+                self.table, self._allowed_bet_types())
 
         await self.delegate.game_over(
             roll_outcome, self.table, payouts, rolled, shooter_id)

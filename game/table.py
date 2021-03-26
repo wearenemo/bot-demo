@@ -108,6 +108,13 @@ class Table:
                 return True
         return False
 
+    def clear(self):
+        for s in self.seats:
+            player = s.player
+            if player is not None:
+                s.unsit()
+                player.clear_bets()
+
     def unseat(self, player_id):
         if player_id not in self._players:
             raise DoesNotExist("player does not exist")

@@ -11,6 +11,9 @@ from bot.scenes.payout_bets import PayoutBetsScene
 from bot.scenes.game_over import GameOverScene
 from bot.scenes.done_playing import DonePlayingScene
 
+from game.exceptions import CrapsException
+from utils import Text as T
+
 
 class BotDealerDelegate(DealerDelegate):
     def __init__(
@@ -68,7 +71,6 @@ class BotDealerDelegate(DealerDelegate):
         table,
         first_roll: bool
     ):
-
         return await GetRollScene().show(
             self.bot,
             dice,
@@ -106,3 +108,14 @@ class BotDealerDelegate(DealerDelegate):
             table,
             last_shooter_id,
             self.display_channel)
+
+    async def report_exception(
+        self,
+        exception: Exception
+    ):
+        exception_str = T.block_quote(
+            f'{T.inline_mono(type(exception))}\n{str(exception)}')
+        await self.display_channel.send(
+            f'Sorry to show you this, but could you let Andy know he has an '
+            f'unhandled exception:\n{exception_str}',
+        )

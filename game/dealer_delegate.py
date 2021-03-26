@@ -55,3 +55,9 @@ class DealerDelegate:
         last_shooter_id
     ):
         raise NotImplementedError()
+
+    async def report_exception(
+        self,
+        exception: Exception
+    ):
+        raise NotImplementedError()
