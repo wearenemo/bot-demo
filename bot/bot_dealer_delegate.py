@@ -119,3 +119,13 @@ class BotDealerDelegate(DealerDelegate):
             f'Sorry to show you this, but could you let Andy know he has an '
             f'unhandled exception:\n{exception_str}',
         )
+
+    async def notify_cleared_players(
+        self,
+        cleared
+    ):
+        cleared_str = T.mono("\n".join([str(p) for p in cleared]))
+        await self.display_channel.send(
+            f'Clearing players due to inactivity. Place '
+            f'a bet at any time to rejoin. Cleared: \n{cleared_str}'
+        )

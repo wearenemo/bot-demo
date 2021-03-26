@@ -1,6 +1,7 @@
 from game.bets import Bet, BetType
 from game.dice import Dice
 from game.player_payout import PlayerPayout
+from game.player import Player
 
 
 class DealerDelegate:
@@ -59,5 +60,11 @@ class DealerDelegate:
     async def report_exception(
         self,
         exception: Exception
+    ):
+        raise NotImplementedError()
+
+    async def notify_cleared_players(
+        self,
+        cleared: [Player]
     ):
         raise NotImplementedError()

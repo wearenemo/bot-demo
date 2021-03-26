@@ -1,4 +1,5 @@
 import random
+from datetime import datetime as dt
 
 from game.exceptions import SeatsTaken, DoesNotExist, AlreadyExists
 from game.dealer import Dealer
@@ -37,6 +38,8 @@ class _Seat:
 
 
 class Table:
+
+    INACTIVE_THRESH = 5.0 * 60  # 5 mins
 
     def __init__(self,
                  num_seats: int,
@@ -114,6 +117,26 @@ class Table:
             if player is not None:
                 s.unsit()
                 player.clear_bets()
+
+    def clear_inactive(self):
+        now = dt.utcnow()
+        cleared = []
+        for s in self.seats:
+            player = s.player
+            if player is not None:
+                inactive_time = player.time_since_last_bet
+                if inactive_time:
+                    if inactive_time > self.INACTIVE_THRESH:
+                        s.unsit()
+                        player.clear_bets()
+                        cleared.append(player)
+                        print("  cleared", player.name)
+                else:
+                    # kinda hacky but basically if we check and the player
+                    # hasn't bet in previous game, we flag them for deletion
+                    # next game by setting _last_bet_at
+                    player._last_bet_at = now
+        return cleared
 
     def unseat(self, player_id):
         if player_id not in self._players:

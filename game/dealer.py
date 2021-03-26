@@ -48,12 +48,13 @@ class Dealer:
                 if not shooter:
                     break
                 shooter_id = shooter.id
-                await self.delegate.done_playing(self.table, shooter_id)
+
                 self.game = None
             except Exception as exc:
                 self.game = None
                 self.table.clear()
                 await self.delegate.report_exception(exc)
+        await self.delegate.done_playing(self.table, shooter_id)
 
     async def play_game(self, shooter_id: int):
         """
@@ -61,6 +62,10 @@ class Dealer:
         """
         if not self.game:
             raise CrapsException("No game to play!")
+
+        cleared = self.table.clear_inactive()
+        if cleared:
+            await self.delegate.notify_cleared_players(cleared)
 
         await self.delegate.collect_bets(self.table, self._allowed_bet_types())
 

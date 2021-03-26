@@ -1,6 +1,8 @@
 from game.exceptions import InsufficientFunds
 from game.bets import PassBetType, DontPassBetType
 
+from datetime import datetime as dt
+
 
 class Player:
 
@@ -11,6 +13,13 @@ class Player:
         self.name = name
         self._coins = coins
         self._active_bets = []
+        self._last_bet_at = None
+
+    @property
+    def time_since_last_bet(self):
+        if self._last_bet_at is None:
+            return None
+        return (dt.utcnow() - self._last_bet_at).total_seconds()
 
     @property
     def net_worth(self):
@@ -73,6 +82,7 @@ class Player:
                     bet.consolidate_into(other)
                     return wagered
             self._active_bets.append(bet)
+            self._last_bet_at = dt.utcnow()
             return wagered
         except InsufficientFunds:
             print('error!')
@@ -85,6 +95,7 @@ class Player:
         for b in self._active_bets:
             self.pay(b.amount)
         self._active_bets.clear()
+        self._last_bet_at = None
 
     def clear_bet(self, bet_cmd_name):
         del_idx = None
