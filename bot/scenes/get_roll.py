@@ -19,12 +19,14 @@ class GetRollScene:
     ):
         # set pace based on test mode
         self.timeout = 6.0
-        self.roll_duration = 1.0
+        self.roll_duration = 0.0
         self.nap = 0.3
+        self.leave_dice_for = 1.5
         if bot.TEST_MODE or table.empty:
             self.timeout = 2.0
             self.roll_duration = 0.0
             self.nap = 0.1
+            self.leave_dice_for = 1.5
         if shooter_id:
             user = await bot.fetch_user(shooter_id)
             bets_in = T.bold("Bets are IN!")
@@ -74,4 +76,6 @@ class GetRollScene:
             now = dt.utcnow()
         dice.roll()
         await roll_m.edit(content=AsciiTable.show_dice(dice))
+        await roll_m.add_reaction(E.DIE)
+        await asyncio.sleep(self.leave_dice_for)
         return dice
