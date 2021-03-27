@@ -1,12 +1,29 @@
 import asyncio
+from datetime import datetime as dt
+
+from bot.exceptions import SceneException
+
 from utils import Emoji as E
 from utils import Text as T
-from datetime import datetime as dt
+
 from game.dice import Dice
 from ascii_table import AsciiTable
 
 
 class GetRollScene:
+
+    ROLL_CMDS = ['roll', 'dice']
+    BLOW_CMDS = ['blow', E.BLOW]
+
+    @classmethod
+    def get_roll_command(cls, msg):
+        content = msg.content.strip().lower()
+        if any([content.startswith(cmd) for cmd in cls.ROLL_CMDS]):
+            return cls.ROLL_CMDS[0]
+        elif any([content.startswith(cmd) for cmd in cls.BLOW_CMDS]):
+            return cls.BLOW_CMDS[0]
+        else:
+            return False
 
     async def show(
         self,
@@ -43,21 +60,20 @@ class GetRollScene:
             return await self.roll(dice, display_channel)
 
         def check(m):
-            if m.content.strip().lower() != 'roll':
-                if m.content.strip().lower() == 'blow':
-                    return True
-                if m.content.startswith(E.BLOW):
-                    return True
-                return False
             if m.author.id != shooter_id:
                 return False
-            return True
+            return True if self.__class__.get_roll_command(m) else False
 
         try:
             resp = await bot.wait_for(
                 'message', check=check, timeout=self.timeout)
-            content = resp.content.strip().lower()
-            if content == 'blow' or content.startswith(E.BLOW):
+            roll_cmd = self.__class__.get_roll_command(resp)
+            if not roll_cmd:
+                raise SceneException(
+                    f"Unexpected roll command: {resp.content}")
+
+            # add some extra flavor if the shooter blew on the dice
+            if roll_cmd == self.__class__.BLOW_CMDS[0]:
                 await resp.add_reaction(E.BLOW)
                 await resp.add_reaction(E.DIE)
 
