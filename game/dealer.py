@@ -1,3 +1,5 @@
+from datetime import datetime as dt
+
 from game.dice import Dice
 from game.bets import Bet, PassBetType, DontPassBetType
 from game.bets import Place4BetType, Place5BetType, Place6BetType
@@ -40,6 +42,10 @@ class Dealer:
         """
         Keep playing as long as the table has a player
         """
+        now = dt.utcnow()
+        for s in self.table.seats:
+            if not s.empty:
+                s.player._last_bet_at = now
         while not self.table.empty:
             try:
                 self.game = Game()
@@ -48,6 +54,7 @@ class Dealer:
                 if not shooter:
                     break
                 shooter_id = shooter.id
+                self.table.save_players()
 
                 self.game = None
             except Exception as exc:
@@ -94,6 +101,7 @@ class Dealer:
                 self.table.bets, rolled, roll_outcome, self.table.point)
             self.table.point = game.point
             self.table.mark_active_bets()
+            self.table.save_players()
 
             await self.delegate.notify_payouts(
                 payouts, self.table, rolled, roll_outcome)

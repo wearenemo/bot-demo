@@ -1,3 +1,5 @@
+import pickle
+
 from game.exceptions import InsufficientFunds, InvalidAmount
 from game.bets import PassBetType, DontPassBetType
 
@@ -14,6 +16,12 @@ class Player:
         self._coins = coins
         self._active_bets = []
         self._last_bet_at = None
+
+    def __getstate__(self):
+        dict = self.__dict__.copy()
+        dict['_coins'] = self.net_worth
+        dict['_active_bets'] = []
+        return dict
 
     @property
     def time_since_last_bet(self):

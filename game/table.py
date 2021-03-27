@@ -6,6 +6,8 @@ from game.dealer import Dealer
 from game.player import Player
 from game.dealer_delegate import DealerDelegate
 
+from persistence_manager import PersistenceManager, PersistenceException
+
 
 class _Seat:
     """
@@ -46,11 +48,22 @@ class Table:
                  _id: int,
                  dealer_delegate: DealerDelegate):
         self._seats: [_Seat] = [_Seat(i) for i in range(num_seats)]
-        self._players: {int: Player} = {}
+        self._players: {int: Player} = self._load_players(_id)
         self._id = _id
         self.dealer = Dealer(self, dealer_delegate)
         self.button_position = 0
         self.point = None
+
+    def _load_players(self, table_id):
+        try:
+            players = PersistenceManager.load_table(table_id)
+        except PersistenceException:
+            players = {}
+        return players
+
+    def save_players(self):
+        saved = PersistenceManager.save_table(self)
+        return saved
 
     def advance_button(self):
         player_found = None
