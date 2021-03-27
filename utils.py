@@ -63,4 +63,5 @@ class Emoji:
     REFRESH      = '🔄'
     CLOCK        = '🕙'
     BLOW         = '🌬'
+    TROPHY       = '🏆'
 

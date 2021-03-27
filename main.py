@@ -84,6 +84,15 @@ async def clear(ctx, bet: str):
     await bot.clear_bet(ctx.author, bet, ctx.channel)
 
 
+@bot.command(aliases=['leaders', 'top', 'winners', 'leaderboard'])
+@check(is_craps_channel)
+async def whales(ctx):
+    """
+    Show leaderboard
+    """
+    await bot.show_leaderboard(ctx.guild, ctx.channel)
+
+
 # only disable TEST_MODE if run with:
 #
 # python main.py --mode deploy

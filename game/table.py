@@ -45,8 +45,8 @@ class Table:
                  num_seats: int,
                  _id: int,
                  dealer_delegate: DealerDelegate):
-        self._seats = [_Seat(i) for i in range(num_seats)]
-        self._players = {}
+        self._seats: [_Seat] = [_Seat(i) for i in range(num_seats)]
+        self._players: {int: Player} = {}
         self._id = _id
         self.dealer = Dealer(self, dealer_delegate)
         self.button_position = 0
@@ -65,6 +65,10 @@ class Table:
                 player_found = player
                 break
         return player_found
+
+    @property
+    def all_players(self):
+        return list(self._players.values())
 
     @property
     def is_playing(self):

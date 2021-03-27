@@ -12,6 +12,7 @@ from bot.scenes.begin_game import BeginGameScene
 from game.exceptions import AlreadyExists, SeatsTaken, CrapsException
 
 from utils import Text as T
+from utils import Emoji as E
 
 
 class CrapsBot(commands.Bot):
@@ -194,3 +195,19 @@ class CrapsBot(commands.Bot):
             return await channel.send(
                 f'Cleared bet {cleared}.\nYour ${cleared.amount:.0f} have been returned.'
             )
+
+    async def show_leaderboard(self, guild, channel):
+        if not guild:
+            return
+        table, delegate = await self.allowed_channel(channel)
+        if not table:
+            return
+        players = table.all_players
+        players.sort(key=lambda p: p.net_worth, reverse=True)
+        players = players[:20]
+        title = T.bold(f"{E.TROPHY} {guild.name} All Time Leaders {E.TROPHY}")
+        player_str = "\n".join([
+            f"{i + 1:2.0f} - " + str(p) for i,p in enumerate(players)])
+        leaderboard = await channel.send(
+            f'{title}{T.mono(player_str)}')
+        await leaderboard.add_reaction(E.TROPHY)
