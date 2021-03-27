@@ -19,8 +19,8 @@ class LoadException(PersistenceException):
 class PersistenceManager:
 
     DATA = 'Data'
-    GUILDS = 'Guilds'
-    GUILD = 'Guild'
+    GUILDS = 'Servers'
+    GUILD = 'Server'
     TABLE = 'Table'
     DOT_PICKLE = '.pickle'
 
@@ -60,21 +60,26 @@ class PersistenceManager:
     @classmethod
     def _make_path_if_non_existent(cls, path):
         if not os.path.isfile(path):
+            path, fname = os.path.split(path)
             try:
                 os.makedirs(path)
             except OSError as exc:
-                print("ERROR making file", exc)
+                print("ERROR making directory", exc)
                 raise PersistenceException(
                     f"Can't create save path {path}: {exc}")
             except Exception as exc:
-                print("EXCEPTION making file", exc)
+                print("EXCEPTION making directory", exc)
 
     @classmethod
     def _save(cls, resource, resource_id, r_type, resource_callback=None):
         success = False
         try:
             path, filename = cls._path_for(r_type, resource_id)
-            cls._make_path_if_non_existent(path)
+            try:
+                cls._make_path_if_non_existent(path)
+            except PersistenceException as exc:
+                print('persistence exception:', exc)
+                pass
             with open(path, 'wb') as f:
                 try:
                     if resource_callback:
@@ -98,6 +103,7 @@ class PersistenceManager:
         try:
             path, filename = cls._path_for(resource_type, resource_id)
             if not os.path.exists(path):
+                print("path does not exist:", path)
                 raise LoadException(
                     f"Save file does not exist for {resource_type} "
                     f"at path {path}"
