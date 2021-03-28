@@ -34,8 +34,9 @@ class PayoutBetsScene:
             s = T.mono("PAYOUTS / LOSSES" + s)
         outcome = T.bold(f"ROLLED {dice.total}: ") + outcome.value
         await channel.send(outcome + s)
-        sleep = 2.0
+        sleep = 4.0
         if bot.TEST_MODE:
-            sleep = 0.0
+            sleep = 1.0
         if payouts_exist:
+            await channel.trigger_typing()
             await asyncio.sleep(sleep)

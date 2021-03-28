@@ -58,10 +58,38 @@ class Emoji:
     MONEY_BAG    = '💰'
     MONEY_WINGS  = '💸'
     SAD          = '😭'
+    ONE          = '1️⃣'
+    TWO          = '2️⃣'
+    THREE        = '3️⃣'
+    FOUR         = '4️⃣'
+    FIVE         = '5️⃣'
+    SIX          = '6️⃣'
     SEVEN        = '7️⃣'
+    EIGHT        = '8️⃣'
+    NINE         = '9️⃣'
     TEN          = '🔟'
     REFRESH      = '🔄'
     CLOCK        = '🕙'
     BLOW         = '🌬'
     TROPHY       = '🏆'
+    MULTIPLY     = '✖️'
+
+    @classmethod
+    def for_number(cls, N: int):
+        numbers = {
+            1: cls.ONE,
+            2: cls.TWO,
+            3: cls.THREE,
+            4: cls.FOUR,
+            5: cls.FIVE,
+            6: cls.SIX,
+            7: cls.SEVEN,
+            8: cls.EIGHT,
+            9: cls.NINE,
+            10: cls.TEN,
+        }
+        if N not in numbers:
+            return cls.SEVEN
+        else:
+            return numbers[N]
 

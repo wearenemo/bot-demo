@@ -4,10 +4,10 @@ from game.dice import Dice
 
 
 class RollOutcome(Enum):
-    Natural = "Natural. Pass bets win."
+    Natural = "Natural. Pass bets win!"
     Craps   = "Craps. Pass bets lose."
     PointSet = "Point set. Shooter keeps dice."
-    PointHit = "Shooter hit the point. Shooter keeps dice."
+    PointHit = "Shooter hit the point! Shooter keeps dice."
     PointMiss7 = "Shooter missed point with 7. Shooter loses dice."
     PointContinues = "Point missed. Shooter keeps dice."
 

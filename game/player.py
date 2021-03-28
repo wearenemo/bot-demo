@@ -1,5 +1,3 @@
-import pickle
-
 from game.exceptions import InsufficientFunds, InvalidAmount
 from game.bets import PassBetType, DontPassBetType
 
@@ -8,7 +6,7 @@ from datetime import datetime as dt
 
 class Player:
 
-    MIN_NET_WORTH = 5
+    MIN_NET_WORTH = 50
 
     def __init__(self, player_id: int, name: str, coins=500.0):
         self.id = player_id

@@ -205,7 +205,7 @@ class CrapsBot(commands.Bot):
         players = table.all_players
         players.sort(key=lambda p: p.net_worth, reverse=True)
         players = players[:20]
-        title = T.bold(f"{E.TROPHY} {guild.name} All Time Leaders {E.TROPHY}")
+        title = T.bold(f"{E.TROPHY} {guild.name} Top Earners {E.TROPHY}")
         player_str = "\n".join([
             f"{i + 1:2.0f} - " + str(p) for i,p in enumerate(players)])
         leaderboard = await channel.send(
